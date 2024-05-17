@@ -31,6 +31,26 @@ const router = createRouter({
       name: "auth",
       component: () => import("@/views/TheAuthView.vue"),
       children: [
+        {
+          path: "signin",
+          name: "signin",
+          component: () => import("@/components/auth/SignIn.vue"),
+        },
+        {
+          path: "email-find",
+          name: "email-find",
+          component: () => import("@/components/auth/EmailFind.vue"),
+        },
+        {
+          path: "password-reset",
+          name: "password-reset",
+          component: () => import("@/components/auth/PasswordReset.vue"),
+        },
+        {
+          path: "signup",
+          name: "signup",
+          component: () => import("@/components/auth/SignUp.vue"),
+        }
       ]
     },
     {

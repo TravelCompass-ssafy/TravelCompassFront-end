@@ -4,7 +4,6 @@
 
 <template>
     <div>
-        Auth View
         <RouterView />
     </div>
 </template>
