@@ -10,7 +10,7 @@ const onlyAuthUser = async (to, from, next) => {
   const { userInfo, isValidToken } = storeToRefs(store);
   const { getUserInfo } = store;
 
-  let token = sessionStorage.getItem("accessToken");
+  let token = localStorage.getItem("accessToken");
 
   if (userInfo.value != null && token) {
     await getUserInfo(token);

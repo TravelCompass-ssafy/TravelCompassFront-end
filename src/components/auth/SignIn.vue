@@ -18,7 +18,7 @@ const loginUser = ref({
 
 const login = async () => {
     await userLogin(loginUser.value)
-    let token = sessionStorage.getItem("accessToken")
+    let token = localStorage.getItem("accessToken")
     console.log(token)
     console.log("isLogin: " + isLogin.value)
     if (isLogin.value) {

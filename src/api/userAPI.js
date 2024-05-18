@@ -19,12 +19,12 @@ async function userConfirm(param, success, fail) {
 }
   
 async function findById(userid, success, fail) {
-  local.defaults.headers["Authorization"] = sessionStorage.getItem("accessToken");
+  local.defaults.headers["Authorization"] = localStorage.getItem("accessToken");
   await local.get(`/auth/info/${userid}`).then(success).catch(fail);
 }
   
 async function tokenRegeneration(user, success, fail) {
-  local.defaults.headers["refreshToken"] = sessionStorage.getItem("refreshToken");
+  local.defaults.headers["refreshToken"] = localStorage.getItem("refreshToken");
   await local.post(`/auth/refresh`, user).then(success).catch(fail);
 }
   
