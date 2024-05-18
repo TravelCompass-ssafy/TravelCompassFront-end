@@ -7,7 +7,9 @@ import { userConfirm, findById, tokenRegeneration, logout } from "@/api/userAPI"
 import { httpStatusCode } from "@/util/http-status"
 
 
-export const userStore = defineStore('userStore', () => {
+export const userStore = defineStore(
+  'userStore',
+  () => {
   const router = useRouter()
 
   const isLogin = ref(false)
@@ -36,8 +38,8 @@ export const userStore = defineStore('userStore', () => {
           isLogin.value = true
           isLoginError.value = false
           isValidToken.value = true
-          sessionStorage.setItem("accessToken", accessToken)
-          sessionStorage.setItem("refreshToken", refreshToken)
+          localStorage.setItem("accessToken", accessToken)
+          localStorage.setItem("refreshToken", refreshToken)
          }
       },
       (error) => {
@@ -75,7 +77,7 @@ export const userStore = defineStore('userStore', () => {
       (response) => {
         if (response.status === httpStatusCode.CREATE) {
           let accessToken = response.data["access-token"]
-          sessionStorage.setItem("accessToken", accessToken)
+          localStorage.setItem("accessToken", accessToken)
           isValidToken.value = true
         }
       },
@@ -115,8 +117,8 @@ export const userStore = defineStore('userStore', () => {
           userInfo.value = null
           isValidToken.value = false
 
-          sessionStorage.removeItem("accessToken")
-          sessionStorage.removeItem("refreshToken")
+          localStorage.removeItem("accessToken")
+          localStorage.removeItem("refreshToken")
         } else {
           console.error("유저 정보 없음!!!!")
         }
@@ -137,4 +139,8 @@ export const userStore = defineStore('userStore', () => {
     tokenRegenerate,
     userLogout,
   }
-})
+  },
+  {
+    persist: true,
+  }
+)
