@@ -33,7 +33,7 @@
               <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="#">마이페이지</a></li>
                 <li><a class="dropdown-item" href="#">로그아웃</a></li>
-                <li><a class="dropdown-item" href="#">로그인</a></li>
+                <li><router-link class="dropdown-item" :to="{ name: 'signin' }">로그인</router-link></li>
                 <li><a class="dropdown-item" href="#">회원가입</a></li>
               </ul>
             </li>

@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 const email = ref("");
-const verificationCode = ref("");
+const verificationCode = ref(false);
 
 </script>
 

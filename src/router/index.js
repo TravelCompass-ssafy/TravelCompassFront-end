@@ -1,6 +1,27 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import TheMainView from "@/views/TheMainView.vue"
 
+import { storeToRefs } from "pinia";
+
+import { userStore } from "@/stores/userStore.js";
+
+const onlyAuthUser = async (to, from, next) => {
+  const store = userStore();
+  const { userInfo, isValidToken } = storeToRefs(store);
+  const { getUserInfo } = store;
+
+  let token = sessionStorage.getItem("accessToken");
+
+  if (userInfo.value != null && token) {
+    await getUserInfo(token);
+  }
+  if (!isValidToken.value || userInfo.value === null) {
+    next({ name: "user-login" });
+  } else {
+    next();
+  }
+};
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [

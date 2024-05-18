@@ -1,9 +1,31 @@
 <script setup>
 import { ref } from "vue";
+import { storeToRefs } from "pinia"
+import { userStore } from "@/stores/userStore"
 import { useRouter } from "vue-router";
 
-const id = ref("");
-const password = ref("");
+const router = useRouter()
+
+const store = userStore();
+
+const { isLogin, isLoginError } = storeToRefs(store)
+const { userLogin, getUserInfo } = store
+
+const loginUser = ref({
+    email: "",
+    password: ""
+})
+
+const login = async () => {
+    await userLogin(loginUser.value)
+    let token = sessionStorage.getItem("accessToken")
+    console.log(token)
+    console.log("isLogin: " + isLogin.value)
+    if (isLogin.value) {
+        getUserInfo(token)
+        router.replace("/")
+    }
+}
 
 </script>
 
@@ -13,12 +35,13 @@ const password = ref("");
             <h3 class="text-center">로그인</h3>
             <form @submit.prevent="login">
                 <div class="mb-3">
-                    <label for="username" class="form-label">아이디</label>
-                    <input type="text" class="form-control" id="username" v-model="id" required>
+                    <label for="username" class="form-label">이메일</label>
+                    <input type="text" class="form-control" id="username" v-model="loginUser.email" required>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">비밀번호</label>
-                    <input type="password" class="form-control" id="password" v-model="password" required>
+                    <input type="password" class="form-control" id="password" v-model="loginUser.password"
+                        @keyup.enter="login" required>
                 </div>
                 <div class="mb-3 text-end">
                     <router-link :to="{ name: 'password-reset' }">비밀번호 재설정</router-link>

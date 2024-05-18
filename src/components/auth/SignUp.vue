@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
-import { signUpAPI, sendVerificationCodeAPI, emailVerifyAPI } from "@/api/user.js"
+import { signUpAPI, sendVerificationCodeAPI, emailVerifyAPI } from "@/api/userAPI.js"
 import { HttpStatusCode } from "axios";
 import { httpStatusCode } from "@/util/http-status"
 
@@ -17,7 +17,7 @@ const signUpForm = ref({
     birthday: "",
 })
 
-const confirmPassword = ref(false);
+const confirmPassword = ref("");
 const authNumber = ref("");
 const emailAuthNumberId = ref("");
 
@@ -115,7 +115,7 @@ const sendVerificationCode = async () => {
                 <div class="mb-3">
                     <label for="nickname" class="form-label">닉네임</label>
                     <input type="text" class="form-control" id="nickname" v-model="signUpForm.nickname" required
-                        pattern="^[A-Za-z_]+$">
+                        pattern="^[A-Za-z0-9_]+$">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">성별</label>
