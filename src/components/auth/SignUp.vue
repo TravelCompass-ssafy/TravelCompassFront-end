@@ -75,7 +75,6 @@ const sendVerificationCode = async () => {
             if (response.status === httpStatusCode.CREATE) {
                 alert("이메일로 인증코드를 발신했습니다!!");
                 emailAuthNumberId.value = response.data.emailAuthNumberId;
-                console.log('인증코드 아이디: ', emailAuthNumberId.value);
             }
         },
         (error) => {
