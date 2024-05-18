@@ -4,10 +4,8 @@
 
 <template>
     <div>
-        Main 화면
+        <RouterView />
     </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

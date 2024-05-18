@@ -12,7 +12,17 @@ export const userStore = defineStore('userStore', () => {
 
   const isLogin = ref(false)
   const isLoginError = ref(false)
-  const userInfo = ref(null)
+  const userInfo = ref({
+    userId: "",
+    email: "",
+    username: "",
+    nickname: "",
+    gender: "",
+    birthday: "",
+    totalStar: "",
+    totalStarCount: "",
+    profile: ""
+  })
   const isValidToken = ref(false)
 
   const userLogin = async (loginUser) => {

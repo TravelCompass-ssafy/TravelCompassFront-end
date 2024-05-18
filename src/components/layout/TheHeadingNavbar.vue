@@ -1,6 +1,11 @@
 <script setup>
 import { useRouter } from "vue-router"
 
+import { userStore } from "@/stores/userStore.js"
+import { storeToRefs } from "pinia";
+
+const { userInfo } = storeToRefs(userStore);
+
 const router = useRouter();
 
 const logout = () => {
@@ -22,7 +27,7 @@ const logout = () => {
         <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
           <ul class="navbar-nav">
             <li class="nav-item">
-                <router-link :to="{ name: 'proceed' }" class="nav-link">어디가니?</router-link>
+              <router-link :to="{ name: 'proceed' }" class="nav-link">어디가니?</router-link>
             </li>
             <li class="nav-item">
               <router-link :to="{ name: 'trip' }" class="nav-link">함께가요</router-link>
@@ -38,7 +43,8 @@ const logout = () => {
                 role="button" data-bs-toggle="dropdown" aria-expanded="false"
                 style="width: 3rem; height: 3rem; object-fit: cover" />
               <ul class="dropdown-menu">
-                <li><router-link :to="{ name: 'mypage' }" class="dropdown-item">마이페이지</router-link></li>
+                <li><router-link :to="{ name: 'mypage' }" class="dropdown-item">마이페이지</router-link>
+                </li>
                 <li><a class="dropdown-item" href="#" @click="logout">로그아웃</a></li>
                 <li><router-link :to="{ name: 'signin' }" class="dropdown-item">로그인</router-link></li>
                 <li><router-link :to="{ name: 'signup' }" class="dropdown-item">회원가입</router-link></li>
