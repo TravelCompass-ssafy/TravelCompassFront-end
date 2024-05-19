@@ -2,13 +2,13 @@
 import { ref, onMounted } from "vue";
 import { userStore } from "@/stores/userStore.js"
 import { storeToRefs } from "pinia"
-import SockJS from "sockjs-client"
-import Stomp from "webstomp-client"
+import SockJS from "sockjs-client/dist/sockjs"
+import Stomp from "stompjs"
 
 const store = userStore();
 const { userInfo } = storeToRefs(store);
 
-const tripDetailId = ref(1);
+const tripDetailId = ref(2);
 const messages = ref([]);
 const sendMessageForm = ref({
     tripDetailId: tripDetailId.value,
@@ -19,7 +19,7 @@ const sendMessageForm = ref({
 let stompClient;
 
 onMounted(() => {
-    const socket = new SockJS('ws://localhost/ws');
+    const socket = new SockJS('http://localhost/ws');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, frame => {
         console.log('Connected: ' + frame);
@@ -43,7 +43,8 @@ const sendMessage = () => {
             <ul class="list-group">
                 <li v-for="message in messages" :key="message.tripDetailChatId" class="list-group-item">
                     <div v-if="message.userId !== userInfo.userId" class="d-flex justify-content-start">
-                        <img :src="message.profile" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                        <img :src="'http://localhost' + message.profile" class="rounded-circle me-2"
+                            style="width: 40px; height: 40px;">
                         <div>
                             <div><strong>{{ message.nickname }}</strong></div>
                             <div>{{ message.message }}</div>
@@ -55,7 +56,8 @@ const sendMessage = () => {
                             <div>{{ message.message }}</div>
                             <div><small>{{ message.createdAt }}</small></div>
                         </div>
-                        <img :src="message.profile" class="rounded-circle ms-2" style="width: 40px; height: 40px;">
+                        <img :src="'http://localhost' + message.profile" class="rounded-circle ms-2"
+                            style="width: 40px; height: 40px;">
                     </div>
                 </li>
             </ul>
