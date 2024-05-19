@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import TheMainView from "@/views/TheMainView.vue"
+import TripChat from "@/components/trip/chat/TripChat.vue"
 
 import { storeToRefs } from "pinia";
 
@@ -97,6 +98,11 @@ const router = createRouter({
       path: "/mypage",
       name: "mypage",
       component: () => import("@/views/TheMyPageView.vue"),
+    },
+    {
+      path: "/chat",
+      name: "chat",
+      component: TripChat
     }
   ]
 })
