@@ -35,17 +35,18 @@ const router = createRouter({
       path: "/trip",
       name: "trip",
       component: () => import("@/views/TheTripView.vue"),
+      redirect: { name: "trip-list" },
       children: [
         {
-          path: "regist",
-          name: "regist",
-          component: () => import("@/components/trip/TripRegist.vue")
+          path: "trip-list",
+          name: "trip-list",
+          component: () => import("@/components/trip/TripList.vue")
         },
         {
-          path: "test",
-          name: "test",
-          component: () => import("@/components/Test.vue")
-        }
+          path: "trip-regist",
+          name: "trip-regist",
+          component: () => import("@/components/trip/TripRegist.vue")
+        },
       ]
     },
     {

@@ -1,23 +1,92 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { localAxios } from "@/util/http-commons.js"
+import { ref, onMounted, watch, computed } from "vue";
 import { useRouter } from "vue-router";
+import TripRegistPlanModal from "@/components/trip/item/TripRegistPlanModal.vue";
+
+const http = localAxios();
+const router = useRouter();
+
+onMounted(() => {
+    getSido();
+})
+
+const sidoList = ref([]);
+
+const getSido = () => {
+    http.get("/attraction/sido")
+        .then((response) => {
+            sidoList.value = response.data;
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+}
 
 const form = ref({
     title: '',
-    region: '',
-    date: '',
-    people: 1,
-    description: '',
-    plans: [''],
+    sidoCode: '',
+    startDate: '',
+    endDate: '',
+    maxCapacity: 0,
+    content: '',
+    plans: {},
     image: null,
 })
 
+const addAttraction = (index, attraction) => {
+    if (!form.value.plans[index]) {
+        form.value.plans[index] = [];
+    }
+    form.value.plans[index].push(attraction);
+}
+
+const deleteAttraction = (index, planIndex) => {
+    form.value.plans[index].splice(planIndex, 1);
+}
+
+const registTrip = () => {
+    console.log(form.value);
+    http.post("/attraction/sido", form)
+    .then((response) => {
+        router.push("trip");
+    })
+    .catch((error) => {
+        console.log(error);
+    });
+}
+
+watch(() => form.value.endDate, (newEndDate, oldEndDate) => {
+    if (form.value.startDate && form.value.startDate > newEndDate) {
+        alert("날짜를 잘못 입력하였습니다.");
+        form.value.endDate = oldEndDate;
+    }
+});
+
+watch(() => form.value.startDate, (newStartDate, oldStartDate) => {
+    if (form.value.endDate && form.value.endDate < newStartDate) {
+        alert("날짜를 잘못 입력하였습니다.");
+        form.value.startDate = oldStartDate;
+    }
+});
+
+const dateRange = computed(() => {
+    const startDate = new Date(form.value.startDate);
+    const endDate = new Date(form.value.endDate);
+    const range = [];
+    let currentDate = startDate;
+    while (currentDate <= endDate) {
+        range.push(currentDate.toISOString().split('T')[0]);
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return range;
+});
 </script>
 
 <template>
     <div class="container mt-5">
         <h1>여행 동행 구하기</h1>
-        <form @submit.prevent="submitForm">
+        <form>
             <div class="mb-3">
                 <label for="image" class="form-label">사진 등록</label>
                 <input type="file" class="form-control" id="image" @change="onFileChange">
@@ -28,31 +97,46 @@ const form = ref({
             </div>
             <div class="mb-3">
                 <label for="region" class="form-label">지역 선택</label>
-                <input type="text" class="form-control" id="region" v-model="form.region" required>
+                <select class="form-select" id="region" v-model="form.sidoCode" required>
+                    <option disabled value="">지역을 선택하세요</option>
+                    <option v-for="sido in sidoList" :key="sido.sidoCode" :value="sido.sidoCode">{{ sido.sidoName }}</option>
+                </select>
             </div>
             <div class="mb-3">
                 <label for="date" class="form-label">일정</label>
-                <input type="date" class="form-control" id="date" v-model="form.date" required>
+                <input type="date" class="form-control" id="date" v-model="form.startDate" required>
+                <input type="date" class="form-control" id="date" v-model="form.endDate" required>
             </div>
             <div class="mb-3">
                 <label for="people" class="form-label">인원</label>
-                <input type="number" class="form-control" id="people" v-model="form.people" min="1" max="100" required>
+                <select class="form-select" id="people" v-model="form.maxCapacity" required>
+                    <option disabled value="0">인원을 선택하세요</option>
+                    <option v-for="i in 100" :key="i" :value="i">{{ i }}</option>
+                </select>
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">내용</label>
-                <textarea class="form-control" id="description" v-model="form.description" required></textarea>
+                <textarea class="form-control" id="description" v-model="form.content" required></textarea>
             </div>
             <div class="mb-3">
                 <label for="plan" class="form-label">여행 계획</label>
-                <div v-for="(plan, index) in form.plans" :key="index" class="mb-2">
-                    <input type="text" class="form-control mb-1" :placeholder="'Day ' + (index + 1)"
-                        v-model="form.plans[index]" required>
-                </div>
-                <button type="button" class="btn btn-primary" @click="addPlan">+ 계획 추가</button>
+                <template v-for="(planDate, index) in dateRange" :key="planDate">
+                    <div class="mb-2" :id="planDate">
+                        <label for="people" class="form-label">{{ planDate }}</label>
+                    </div>
+                    <div v-for="(attraction, planIndex) in form.plans[index]" :key="attraction.contentId">
+                        <label for="people" class="form-label">{{ attraction.title }}</label>
+                        <button type="button" @click="deleteAttraction(index, planIndex)" class="btn btn-danger">제거</button>
+                    </div>
+                    <div>
+                        <TripRegistPlanModal :index="index" :sido-list="sidoList" :plan-date="planDate" @add-attraction="addAttraction"></TripRegistPlanModal>
+                    </div>
+                </template>
             </div>
 
-            <button type="submit" class="btn btn-success">등록</button>
+            <button type="submit" @click.prevent="registTrip" class="btn btn-success">등록</button>
         </form>
+
     </div>
 </template>
 
