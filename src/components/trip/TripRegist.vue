@@ -1,11 +1,15 @@
 <script setup>
-import { localAxios } from "@/util/http-commons.js"
 import { ref, onMounted, watch, computed } from "vue";
 import { useRouter } from "vue-router";
+
+import { localAxios } from "@/util/http-commons.js"
+import { userStore } from '@/stores/userStore.js'
+
 import TripRegistPlanModal from "@/components/trip/item/TripRegistPlanModal.vue";
 
 const http = localAxios();
 const router = useRouter();
+const store = userStore();
 
 onMounted(() => {
     getSido();
@@ -25,6 +29,8 @@ const getSido = () => {
 
 const form = ref({
     title: '',
+    userId: store.userInfo.userId,
+    userNickname: store.userInfo.nickname,
     sidoCode: '',
     startDate: '',
     endDate: '',
@@ -47,9 +53,9 @@ const deleteAttraction = (index, planIndex) => {
 
 const registTrip = () => {
     console.log(form.value);
-    http.post("/attraction/sido", form)
+    http.post("/trip", form.value)
     .then((response) => {
-        router.push("trip");
+        router.push({ name: "trip" });
     })
     .catch((error) => {
         console.log(error);
