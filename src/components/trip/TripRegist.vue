@@ -1,7 +1,8 @@
 <script setup>
 import { localAxios } from "@/util/http-commons.js"
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { useRouter } from "vue-router";
+import TripRegistPlanModal from "@/components/trip/item/TripRegistPlanModal.vue";
 
 const http = localAxios();
 const router = useRouter();
@@ -11,22 +12,11 @@ onMounted(() => {
 })
 
 const sidoList = ref([]);
-const gugunList = ref([]);
 
 const getSido = () => {
     http.get("/attraction/sido")
         .then((response) => {
             sidoList.value = response.data;
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-}
-
-const getGugun = (sidoCode) => {
-    http.get(`/attraction/gugun?sido-code=${sidoCode}`)
-        .then((response) => {
-            gugunList.value = response.data;
         })
         .catch((error) => {
             console.log(error);
@@ -40,15 +30,30 @@ const form = ref({
     endDate: '',
     maxCapacity: 0,
     content: '',
-    plans: [''],
+    plans: {},
     image: null,
 })
 
+const addAttraction = (index, attraction) => {
+    if (!form.value.plans[index]) {
+        form.value.plans[index] = [];
+    }
+    form.value.plans[index].push(attraction);
+}
+
+const deleteAttraction = (index, planIndex) => {
+    form.value.plans[index].splice(planIndex, 1);
+}
+
 const registTrip = () => {
     console.log(form.value);
-    if (form.value.startDate > form.value.endDate) {
-        console.log(123);
-    }
+    http.post("/attraction/sido", form)
+    .then((response) => {
+        router.push("trip");
+    })
+    .catch((error) => {
+        console.log(error);
+    });
 }
 
 watch(() => form.value.endDate, (newEndDate, oldEndDate) => {
@@ -65,6 +70,17 @@ watch(() => form.value.startDate, (newStartDate, oldStartDate) => {
     }
 });
 
+const dateRange = computed(() => {
+    const startDate = new Date(form.value.startDate);
+    const endDate = new Date(form.value.endDate);
+    const range = [];
+    let currentDate = startDate;
+    while (currentDate <= endDate) {
+        range.push(currentDate.toISOString().split('T')[0]);
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return range;
+});
 </script>
 
 <template>
@@ -104,41 +120,23 @@ watch(() => form.value.startDate, (newStartDate, oldStartDate) => {
             </div>
             <div class="mb-3">
                 <label for="plan" class="form-label">여행 계획</label>
-                <div v-for="(plan, index) in form.plans" :key="index" class="mb-2">
-                    <input type="text" class="form-control mb-1" :placeholder="'Day ' + (index + 1)"
-                        v-model="form.plans[index]" required>
-                </div>
-
-
-                <button type="button" class="btn btn-primary" @click="addPlan">+ 계획 추가</button>
+                <template v-for="(planDate, index) in dateRange" :key="planDate">
+                    <div class="mb-2" :id="planDate">
+                        <label for="people" class="form-label">{{ planDate }}</label>
+                    </div>
+                    <div v-for="(attraction, planIndex) in form.plans[index]" :key="attraction.contentId">
+                        <label for="people" class="form-label">{{ attraction.title }}</label>
+                        <button type="button" @click="deleteAttraction(index, planIndex)" class="btn btn-danger">제거</button>
+                    </div>
+                    <div>
+                        <TripRegistPlanModal :index="index" :sido-list="sidoList" :plan-date="planDate" @add-attraction="addAttraction"></TripRegistPlanModal>
+                    </div>
+                </template>
             </div>
 
             <button type="submit" @click.prevent="registTrip" class="btn btn-success">등록</button>
-
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTrip">
-            계획 추가
-            </button>
-
-            <!-- Modal -->
-            <div class="modal fade" id="addTrip" tabindex="-1" aria-labelledby="addTripLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="addTripLabel">계획 추가</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            ...
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary">추가</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </form>
+
     </div>
 </template>
 
