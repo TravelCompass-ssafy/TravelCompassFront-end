@@ -88,6 +88,14 @@ const getTripDetailList = () => {
                                 <p class="card-text">작성자: {{ tripDetail.nickname }}</p>
                                 <p class="card-text">View: {{ tripDetail.view }}</p>
                             </div>
+                            <p class="card-text text-end">
+                                {{
+                                    tripDetail.createTime < 1 ? '방금 전' :
+                                    tripDetail.createTime < 60 ? tripDetail.createTime + '분 전' :
+                                    tripDetail.createTime < 1440 ? Math.floor(tripDetail.createTime / 60) + '시간 전' :
+                                    Math.floor(tripDetail.createTime / 1440) + '일 전'
+                                }}
+                            </p>
                         </div>
                     </div>
                 </router-link>

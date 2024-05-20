@@ -36,16 +36,16 @@ const form = ref({
     endDate: '',
     maxCapacity: 0,
     content: '',
-    attractionInfoList: [],
+    tripPlanAttractionList: [],
     image: null,
 })
 
 const addAttraction = (index, attraction) => {
-    form.value.attractionInfoList[index].push(attraction);
+    form.value.tripPlanAttractionList[index].push(attraction);
 }
 
 const deleteAttraction = (index, planIndex) => {
-    form.value.attractionInfoList[index].splice(planIndex, 1);
+    form.value.tripPlanAttractionList[index].splice(planIndex, 1);
 }
 
 const registTrip = () => {
@@ -86,7 +86,7 @@ const dateRange = computed(() => {
 });
 
 watch(dateRange, (newRange) => {
-    form.value.attractionInfoList = newRange.map(() => []);
+    form.value.tripPlanAttractionList = newRange.map(() => []);
 }, { immediate: true });
 </script>
 
@@ -131,7 +131,7 @@ watch(dateRange, (newRange) => {
                     <div class="mb-2" :id="planDate">
                         <label for="people" class="form-label">{{ planDate }}</label>
                     </div>
-                    <div v-for="(attraction, planIndex) in form.attractionInfoList[index]" :key="attraction.contentId">
+                    <div v-for="(attraction, planIndex) in form.tripPlanAttractionList[index]" :key="attraction.contentId">
                         <label for="people" class="form-label">{{ attraction.title }}</label>
                         <button type="button" @click="deleteAttraction(index, planIndex)" class="btn btn-danger">제거</button>
                     </div>
