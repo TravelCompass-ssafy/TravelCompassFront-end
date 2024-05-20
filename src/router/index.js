@@ -94,6 +94,13 @@ const router = createRouter({
       path: "/review",
       name: "review",
       component: () => import("@/views/TheReviewView.vue"),
+      children: [
+        {
+          path: "regist",
+          name: "regist",
+          component: () => import("@/components/review/RegistReview.vue")
+        }
+      ]
     },
     {
       path: "/mypage",

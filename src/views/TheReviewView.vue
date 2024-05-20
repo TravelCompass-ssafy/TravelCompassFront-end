@@ -4,7 +4,7 @@
 
 <template>
     <div>
-        Review View
+        <RouterView />
     </div>
 </template>
 

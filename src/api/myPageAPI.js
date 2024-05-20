@@ -1,5 +1,4 @@
 import { localAxios } from "@/util/http-commons.js";
-import { onErrorCaptured } from "vue";
 
 const local = localAxios();
 

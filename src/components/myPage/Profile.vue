@@ -21,8 +21,6 @@ const newPassword = ref('');
 const confirmNewPassword = ref('');
 const selectedFile = ref(null);
 
-
-
 const changePassword = () => {
     if (newPassword.value != confirmNewPassword.value) {
         alert("비밀번호가 일치하지 않습니다!")
