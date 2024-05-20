@@ -47,6 +47,11 @@ const router = createRouter({
           name: "trip-regist",
           component: () => import("@/components/trip/TripRegist.vue")
         },
+        {
+          path: "trip-detail/:tripDetailId",
+          name: "trip-detail",
+          component: () => import("@/components/trip/TripDetail.vue")
+        },
       ]
     },
     {
