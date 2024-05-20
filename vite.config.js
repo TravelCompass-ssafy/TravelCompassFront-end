@@ -15,4 +15,11 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
+  vue: {
+    template: {
+      compilerOptions: {
+        isCustomElement: (tag) => ['swiper-container', 'swiper-slide'].includes(tag)
+      }
+    }
+  }
 })

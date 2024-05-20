@@ -104,6 +104,11 @@ const router = createRouter({
           path: "regist",
           name: "regist",
           component: () => import("@/components/review/RegistReview.vue")
+        },
+        {
+          path: "list",
+          name: "list",
+          component: () => import("@/components/review/ReviewList.vue")
         }
       ]
     },
