@@ -1,11 +1,10 @@
 <script setup>
-
+import ProceedPlan from "@/components/proceed/ProceedPlan.vue";
 </script>
 
 <template>
     <div>
-        ㅎㅇㅇ
-        <RouterView />
+        <ProceedPlan />
     </div>
 </template>
 

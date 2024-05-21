@@ -1,14 +1,33 @@
 <script setup>
-import { useRouter } from "vue-router"
-
+import { localAxios } from "@/util/http-commons.js"
+import { ref, onMounted  } from "vue";
 import { userStore } from "@/stores/userStore.js"
 import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
 
+const http = localAxios();
 const router = useRouter();
 const store = userStore();
 
+onMounted(() => {
+  getProceedTrip();
+})
+
 const logout = () => {
   router.push({ name: "main" });
+}
+
+const proceedTrip = ref({})
+
+const getProceedTrip = () => {
+  http.get(`/trip/proceed/${store.userInfo.userId}`)
+    .then((response) => {
+        proceedTrip.value = response.data;
+        console.log(proceedTrip.value);
+    })
+    .catch((error) => {
+        console.log(error);
+    });
 }
 </script>
 
@@ -25,7 +44,7 @@ const logout = () => {
         </button>
         <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
           <ul class="navbar-nav">
-            <li class="nav-item">
+            <li class="nav-item" v-if="getProceedTrip">
               <router-link :to="{ name: 'proceed' }" class="nav-link">어디가니?</router-link>
             </li>
             <li class="nav-item">
