@@ -26,7 +26,7 @@ async function writeReview(writeReviewForm, success, fail) {
 }
 
 async function getReviews(params, success, fail, final) {
-    local.get(`/review`, { params: { page: params.page, size: params.size } }).then(success).catch(fail).finally(final);
+    local.get(`/review`, { params: { page: params.page, size: params.size, keyword: params.keyword, category: params.category } }).then(success).catch(fail).finally(final);
 }
 
 async function getComments(reviewId, params, success, fail, final) {
