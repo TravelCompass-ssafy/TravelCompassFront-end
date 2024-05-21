@@ -21,14 +21,33 @@ const getTripDetail = () => {
     http.get(`/trip/${route.params.tripDetailId}`)
         .then((response) => {
             tripDetail.value = response.data;
-            console.log(tripDetail.value);
         })
         .catch((error) => {
             console.log(error);
         });
 }
 
+const joinAble = ref(false);
+
+const updateJoinAble = () => {
+    const joinParams = {
+    userId: store.userInfo.userId,
+    startDate: tripDetail.value.startDate,
+    endDate: tripDetail.value.endDate
+    }
+
+    console.log(joinParams);
+
+    http.get("/trip/checkjoinable", { params: joinParams })
+        .then((response) => {
+            joinAble.value = response.data;
+            console.log(joinAble.value);
+        })
+}
+
 const joinTrip = () => {
+    updateJoinAble();
+
     if (tripDetail.value.memberList.length >= tripDetail.value.maxCapacity) {
         alert("정원초과!");
         return;
@@ -36,6 +55,11 @@ const joinTrip = () => {
 
     if (tripDetail.value.memberList.some(member => member.userId === store.userInfo.userId)) {
         alert("중복!");
+        return;
+    }
+
+    if (!joinAble) {
+        alert("중복된 일정이 있습니다!");
         return;
     }
 

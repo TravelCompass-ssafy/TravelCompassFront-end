@@ -42,14 +42,13 @@ const logout = () => {
                 role="button" data-bs-toggle="dropdown" aria-expanded="false"
                 style="width: 3rem; height: 3rem; object-fit: cover" />
               <ul class="dropdown-menu">
-                <template v-if="store.userInfo.userId !== ''">
+
                   <li><router-link :to="{ name: 'mypage' }" class="dropdown-item">마이페이지</router-link></li>
                   <li><a class="dropdown-item" href="#" @click="logout">로그아웃</a></li>
-                </template>
-                <template v-else>
+
                   <li><router-link :to="{ name: 'signin' }" class="dropdown-item">로그인</router-link></li>
                   <li><router-link :to="{ name: 'signup' }" class="dropdown-item">회원가입</router-link></li>
-                </template>
+
               </ul>
             </li>
           </ul>

@@ -85,7 +85,13 @@ const router = createRouter({
       path: "/proceed",
       name: "proceed",
       component: () => import("@/views/TheProceedView.vue"),
+      redirect: { name: "proceed-list" },
       children: [
+        {
+          path: "proceed-list",
+          name: "proceed-list",
+          component: () => import("@/components/proceed/proceedList.vue")
+        }
       ]
     },
     {
