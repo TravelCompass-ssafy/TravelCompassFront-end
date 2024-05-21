@@ -70,7 +70,7 @@ const getTripDetailList = () => {
     <div class="row">
         <template v-for="tripDetail in tripDetailList" :key="tripDetail.tripDetailId">
             <div class="col-md-4 mb-4">
-                <router-link :to="{ name: 'trip-detail', params: { tripDetailId: tripDetail.tripDetailId } }" class="nav-link">
+                <router-link :to="{ name: 'share-detail', params: { tripDetailId: tripDetail.tripDetailId } }" class="nav-link">
                     <div class="card">
                         <img :src="VITE_VUE_IMG_URL + '/' + tripDetail.imagePath" class="card-img-top" alt="Trip Image">
                         <div class="card-body">

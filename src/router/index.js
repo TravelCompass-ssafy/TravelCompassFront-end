@@ -99,7 +99,7 @@ const router = createRouter({
         },
         {
           path: "share/:tripDetailId",
-          name: "share",
+          name: "share-detail",
           component: () => import("@/components/share/ShareDetail.vue")
         },
       ]
