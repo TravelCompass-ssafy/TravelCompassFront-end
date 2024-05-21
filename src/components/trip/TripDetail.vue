@@ -106,9 +106,9 @@ const joinTrip = () => {
                     <h5 class="card-subtitle mb-2">여행계획</h5>
                     <template v-for="(tripPlan, tripPlanIndex) in tripDetail.tripPlanAttractionList" :key="tripPlanIndex">
                         <template v-if="tripPlan.length > 0">
-                            <div>{{tripPlan[0].tripDate}}</div>
-                            <div v-for="plan in tripPlan" :key="plan.contentId">
-                                {{ plan.title }}
+                            <div class="font-weight-bold mt-3">{{ tripPlan[0].tripDate }}</div>
+                            <div v-for="plan in tripPlan" :key="plan.contentId" class="ml-3 mb-2">
+                                <span class="badge badge-secondary text-dark" style="font-size: 1em;">{{ plan.title }}</span>
                             </div>
                         </template>
                     </template>
@@ -119,8 +119,6 @@ const joinTrip = () => {
 
     <button type="button" class="btn btn-primary" @click="joinTrip">동행하기</button>
 </div>
-
-
 </template>
 
 <style scoped>
