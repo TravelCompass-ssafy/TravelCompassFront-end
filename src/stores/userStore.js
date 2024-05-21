@@ -25,6 +25,9 @@ export const userStore = defineStore(
     totalStarCount: "",
     profile: ""
   })
+
+    
+    console.log(userInfo.value);
   const isValidToken = ref(false)
 
   const userLogin = async (loginUser) => {
@@ -40,6 +43,7 @@ export const userStore = defineStore(
           isValidToken.value = true
           localStorage.setItem("accessToken", accessToken)
           localStorage.setItem("refreshToken", refreshToken)
+          userInfo.value = data.userInfo;
          }
       },
       (error) => {
