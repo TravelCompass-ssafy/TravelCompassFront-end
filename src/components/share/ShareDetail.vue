@@ -13,7 +13,19 @@ const store = userStore();
 
 onMounted(() => {
     getTripDetail();
+    upCountView();
 })
+
+const upCountView = () => {
+    console.log(route.params.tripDetailId);
+    http.put(`/trip/view/${route.params.tripDetailId}`)
+        .then((response) => {
+            console.log(route.params.tripDetailId);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+}
 
 const tripDetail = ref({});
 
@@ -91,7 +103,7 @@ const joinTrip = async () => {
                     <h3 class="card-title">{{ tripDetail.title }}</h3>
                     <div class="mb-3">
                         <div class="d-flex flex-column align-items-start">
-                            <div>{{ tripDetail.view }} views</div>
+                            <div>{{ tripDetail.view + 1 }} views</div>
                             <div v-if="tripDetail.memberList">
                                 {{ tripDetail.memberList.length }}/{{ tripDetail.maxCapacity }} members
                             </div>
