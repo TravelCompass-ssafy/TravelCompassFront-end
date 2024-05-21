@@ -35,7 +35,7 @@ const logout = () => {
               <router-link :to="{ name: 'share' }" class="nav-link">여행도장</router-link>
             </li>
             <li class="nav-item">
-              <router-link :to="{ name: 'review' }" class="nav-link">발자취</router-link>
+              <router-link :to="{ name: 'list' }" class="nav-link">발자취</router-link>
             </li>
             <li class="nav-item dropdown">
               <img class="nav-link dropdown-toggle rounded-circle" src="@/assets/noprofile.jpg" id="navbarDropdown"
@@ -43,11 +43,11 @@ const logout = () => {
                 style="width: 3rem; height: 3rem; object-fit: cover" />
               <ul class="dropdown-menu">
 
-                  <li><router-link :to="{ name: 'mypage' }" class="dropdown-item">마이페이지</router-link></li>
-                  <li><a class="dropdown-item" href="#" @click="logout">로그아웃</a></li>
+                <li><router-link :to="{ name: 'mypage' }" class="dropdown-item">마이페이지</router-link></li>
+                <li><a class="dropdown-item" href="#" @click="logout">로그아웃</a></li>
 
-                  <li><router-link :to="{ name: 'signin' }" class="dropdown-item">로그인</router-link></li>
-                  <li><router-link :to="{ name: 'signup' }" class="dropdown-item">회원가입</router-link></li>
+                <li><router-link :to="{ name: 'signin' }" class="dropdown-item">로그인</router-link></li>
+                <li><router-link :to="{ name: 'signup' }" class="dropdown-item">회원가입</router-link></li>
 
               </ul>
             </li>

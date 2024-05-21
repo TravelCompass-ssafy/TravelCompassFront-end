@@ -35,12 +35,17 @@ async function getComments(reviewId, params, success, fail, final) {
 
 async function likeReview(reviewId, success, fail) {
     local.defaults.headers["Authorization"] = localStorage.getItem("accessToken");
-    local.post(`/review/${reviewId}/like`).then(success).catch(fail);
+    local.patch(`/review/${reviewId}/like`).then(success).catch(fail);
 }
 
-async function writeCommentReply(commentId, comment, success, fail) {
+async function writeCommentReply(reviewId, commentId, reply, success, fail) {
     local.defaults.headers["Authorization"] = localStorage.getItem("accessToken");
-    local.post(`/review/comment/${commentId}/reply`, comment).then(success).catch(fail);
+    local.post(`/review/${reviewId}/comment/${commentId}/reply`, reply).then(success).catch(fail);
 }
 
-export { writeReview, getReviews, getComments, likeReview, writeCommentReply }
+async function writeComment(reviewId, comment, success, fail) {
+    local.defaults.headers["Authorization"] = localStorage.getItem("accessToken");
+    local.post(`/review/${reviewId}/comment`, comment).then(success).catch(fail);
+}
+
+export { writeReview, getReviews, getComments, likeReview, writeCommentReply, writeComment }
