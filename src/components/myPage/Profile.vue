@@ -6,6 +6,8 @@ import { storeToRefs } from "pinia";
 import { updatePassword, updateNickName, updateIntroduction, updateProfileImage } from "@/api/myPageAPI";
 import { httpStatusCode } from "@/util/http-status";
 
+const { VITE_VUE_IMG_URL } = import.meta.env;
+
 const store = userStore();
 
 const { userInfo } = storeToRefs(store);
@@ -136,7 +138,7 @@ const changeProfile = () => {
         <div class="row">
             <div class="col-md-4 text-center">
                 <div class="userInfo-image-wrapper">
-                    <img :src="'http://localhost' + userInfo.profile" class="rounded-circle border" width="150"
+                    <img :src="VITE_VUE_IMG_URL + userInfo.profile" class="rounded-circle border" width="150"
                         height="150" alt="프로필 사진" @click="showuserInfoImageModal = true">
                 </div>
             </div>

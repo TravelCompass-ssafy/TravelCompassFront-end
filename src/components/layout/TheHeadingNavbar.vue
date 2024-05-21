@@ -11,13 +11,13 @@ const store = userStore();
 
 const { userLogout } = store;
 
-onMounted(() => {
-  if (store.userInfo) {
-    userId = store.userInfo.userId;
-  }
+// onMounted(() => {
+//   if (store.userInfo) {
+//     userId = store.userInfo.userId;
+//   }
 
-  getProceedTrip();
-})
+//   getProceedTrip();
+// })
 
 const userId = ref('');
 
@@ -28,16 +28,16 @@ const logout = () => {
 
 const proceedTrip = ref({})
 
-const getProceedTrip = () => {
-  http.get(`/trip/proceed/${userId.value}`)
-    .then((response) => {
-      proceedTrip.value = response.data;
-      console.log(proceedTrip.value);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-}
+// const getProceedTrip = () => {
+//   http.get(`/trip/proceed/${userId.value}`)
+//     .then((response) => {
+//       proceedTrip.value = response.data;
+//       console.log(proceedTrip.value);
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//     });
+// }
 </script>
 
 <template>

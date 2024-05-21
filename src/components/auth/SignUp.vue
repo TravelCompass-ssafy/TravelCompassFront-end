@@ -27,12 +27,12 @@ const signUp = async () => {
     if (signUpForm.value.password !== confirmPassword.value) {
         alert("패스워드가 일치하지 않습니다.");
     }
-    else if (emailValidCheck) {
-        alert("이미 존재하는 이메일입니다. \n기존 이메일을 이용해주세요!")
-    }
-    else if (nickNameValidCheck) {
-        alert("이미 존재하는 닉네임입니다. \n다른 닉네임을 사용해주세요!")
-    }
+    // else if (emailValidCheck) {
+    //     alert("이미 존재하는 이메일입니다. \n기존 이메일을 이용해주세요!")
+    // }
+    // else if (nickNameValidCheck) {
+    //     alert("이미 존재하는 닉네임입니다. \n다른 닉네임을 사용해주세요!")
+    // }
     else {
         const data = {
             emailAuthNumberId: emailAuthNumberId.value,

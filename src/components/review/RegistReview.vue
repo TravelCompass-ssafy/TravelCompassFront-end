@@ -25,7 +25,7 @@ const route = useRoute();
 // )
 
 const props = reactive({
-    tripDetailId: 2,
+    tripDetailId: 6,
     contentId: 125266,
     title: '국립 청태산자연휴양림'
 })

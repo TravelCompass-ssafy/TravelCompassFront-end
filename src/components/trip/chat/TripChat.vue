@@ -7,6 +7,8 @@ import Stomp from "stompjs"
 import { format, parseISO, isSameDay } from 'date-fns'
 import { getMessages } from "@/api/chatAPI.js"
 
+const { VITE_VUE_SOCKET, VITE_VUE_IMG_URL } = import.meta.env;
+
 const props = defineProps({
     tripDetailId: Number,
 })
@@ -57,7 +59,7 @@ const loadMessages = async () => {
 }
 
 onMounted(() => {
-    const socket = new SockJS('http://localhost/ws');
+    const socket = new SockJS(`${VITE_VUE_SOCKET}/ws`);
     stompClient = Stomp.over(socket);
     stompClient.connect({}, frame => {
         console.log('Connected: ' + frame);
@@ -142,7 +144,7 @@ const formattedMessages = computed(() => {
                     </template>
                     <template v-else>
                         <div v-if="message.userId !== userInfo.userId" class="d-flex justify-content-start">
-                            <img :src="'http://localhost' + message.profile" class="rounded-circle me-2"
+                            <img :src="VITE_VUE_IMG_URL + message.profile" class="rounded-circle me-2"
                                 style="width: 40px; height: 40px;">
                             <div>
                                 <div><strong>{{ message.nickName }}</strong></div>
