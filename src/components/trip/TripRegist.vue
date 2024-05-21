@@ -117,7 +117,7 @@ watch(dateRange, (newRange) => {
             <div class="mb-3">
                 <label for="people" class="form-label">인원</label>
                 <select class="form-select" id="people" v-model="form.maxCapacity" required>
-                    <option disabled value="0">인원을 선택하세요</option>
+                    <option disabled value="1">인원을 선택하세요</option>
                     <option v-for="i in 100" :key="i" :value="i">{{ i }}</option>
                 </select>
             </div>

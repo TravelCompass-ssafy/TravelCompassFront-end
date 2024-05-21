@@ -29,7 +29,7 @@ const getTripDetail = () => {
 
 const joinAble = ref(false);
 
-const updateJoinAble = () => {
+const updateJoinAble = async () => {
     const joinParams = {
     userId: store.userInfo.userId,
     startDate: tripDetail.value.startDate,
@@ -45,43 +45,54 @@ const updateJoinAble = () => {
         })
 }
 
-const joinTrip = () => {
-    updateJoinAble();
-
-    if (tripDetail.value.memberList.length >= tripDetail.value.maxCapacity) {
-        alert("정원초과!");
-        return;
+const joinTrip = async () => {
+    const joinParams = {
+    userId: store.userInfo.userId,
+    startDate: tripDetail.value.startDate,
+    endDate: tripDetail.value.endDate
     }
 
-    if (tripDetail.value.memberList.some(member => member.userId === store.userInfo.userId)) {
-        alert("중복!");
-        return;
-    }
+    console.log(joinParams);
 
-    if (!joinAble) {
-        alert("중복된 일정이 있습니다!");
-        return;
-    }
-
-    const tripDetailMemberDto = {
-        tripDetailId: tripDetail.value.tripDetailId,
-        userId: store.userInfo.userId,
-        nickname: tripDetail.value.nickname
-    }
-
-    http.post(`/trip/${tripDetail.value.tripDetailId}`, tripDetailMemberDto, {
-        headers: {
-            'Authorization': `${localStorage.getItem("accessToken")}`
-        }
-    })
+    http.get("/trip/checkjoinable", { params: joinParams })
         .then((response) => {
-            getTripDetail();
-            alert("동행하였습니다!");
+            joinAble.value = response.data;
+
+            if (tripDetail.value.memberList.length >= tripDetail.value.maxCapacity) {
+                alert("정원이 초과되었습니다!");
+                return;
+            }
+
+            if (tripDetail.value.memberList.some(member => member.userId === store.userInfo.userId)) {
+                alert("이미 참가하였습니다. ");
+                return;
+            }
+
+            if (!joinAble.value) {
+                alert("중복된 일정이 있습니다!");
+                return;
+            }
+
+            const tripDetailMemberDto = {
+                tripDetailId: tripDetail.value.tripDetailId,
+                userId: store.userInfo.userId,
+                nickname: tripDetail.value.nickname
+            }
+
+            http.post(`/trip/${tripDetail.value.tripDetailId}`, tripDetailMemberDto, {
+                headers: {
+                    'Authorization': `${localStorage.getItem("accessToken")}`
+                }
+            })
+                .then((response) => {
+                    getTripDetail();
+                    alert("동행하였습니다!");
+                })
+                .catch((error) => {
+                    console.log(error);
+                    alert("동행실패!");
+                });
         })
-        .catch((error) => {
-            console.log(error);
-            alert("동행실패!");
-        });
 }
 
 </script>
