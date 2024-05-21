@@ -4,8 +4,10 @@
 
 <template>
     <div>
-        <router-view />
+        
     </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>

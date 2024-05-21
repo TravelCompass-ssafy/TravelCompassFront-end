@@ -90,7 +90,18 @@ const router = createRouter({
       path: "/share",
       name: "share",
       component: () => import("@/views/TheShareView.vue"),
+      redirect: { name: "share-list" },
       children: [
+        {
+          path: "share-list",
+          name: "share-list",
+          component: () => import("@/components/share/ShareList.vue")
+        },
+        {
+          path: "share/:tripDetailId",
+          name: "share",
+          component: () => import("@/components/share/ShareDetail.vue")
+        },
       ]
     },
     {
