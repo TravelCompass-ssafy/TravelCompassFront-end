@@ -1,25 +1,24 @@
 <script setup>
 import { localAxios } from "@/util/http-commons.js"
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { userStore } from "@/stores/userStore.js"
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
+import noProfileImage from "@/assets/noprofile.jpg"
+
+const { VITE_VUE_IMG_URL } = import.meta.env;
 
 const http = localAxios();
 const router = useRouter();
 const store = userStore();
 
 const { userLogout } = store;
+const { isLogin, userInfo } = storeToRefs(store);
 
-// onMounted(() => {
-//   if (store.userInfo) {
-//     userId = store.userInfo.userId;
-//   }
 
-//   getProceedTrip();
-// })
-
-const userId = ref('');
+onMounted(() => {
+  getProceedTrip();
+})
 
 const logout = () => {
   userLogout();
@@ -28,16 +27,20 @@ const logout = () => {
 
 const proceedTrip = ref({})
 
-// const getProceedTrip = () => {
-//   http.get(`/trip/proceed/${userId.value}`)
-//     .then((response) => {
-//       proceedTrip.value = response.data;
-//       console.log(proceedTrip.value);
-//     })
-//     .catch((error) => {
-//       console.log(error);
-//     });
-// }
+const getProceedTrip = () => {
+  http.get(`/trip/proceed/${userInfo.userId}`)
+    .then((response) => {
+      proceedTrip.value = response.data;
+      console.log(proceedTrip.value);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
+const profileImageUrl = computed(() => {
+  return isLogin.value ? import.meta.env.VITE_VUE_IMG_URL + userInfo.value.profile : noProfileImage;
+});
 </script>
 
 <template>
@@ -53,7 +56,7 @@ const proceedTrip = ref({})
         </button>
         <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
           <ul class="navbar-nav">
-            <li class="nav-item" v-if="getProceedTrip">
+            <li class="nav-item" v-if="proceedTrip">
               <router-link :to="{ name: 'proceed' }" class="nav-link">어디가니?</router-link>
             </li>
             <li class="nav-item">
@@ -66,17 +69,19 @@ const proceedTrip = ref({})
               <router-link :to="{ name: 'list' }" class="nav-link">발자취</router-link>
             </li>
             <li class="nav-item dropdown">
-              <img class="nav-link dropdown-toggle rounded-circle" src="@/assets/noprofile.jpg" id="navbarDropdown"
+              <img class="nav-link dropdown-toggle rounded-circle" :src="profileImageUrl" id="navbarDropdown"
                 role="button" data-bs-toggle="dropdown" aria-expanded="false"
                 style="width: 3rem; height: 3rem; object-fit: cover" />
               <ul class="dropdown-menu">
 
-                <li><router-link :to="{ name: 'mypage' }" class="dropdown-item">마이페이지</router-link></li>
-                <li><a class="dropdown-item" href="#" @click="logout">로그아웃</a></li>
-
-                <li><router-link :to="{ name: 'signin' }" class="dropdown-item">로그인</router-link></li>
-                <li><router-link :to="{ name: 'signup' }" class="dropdown-item">회원가입</router-link></li>
-
+                <div v-if="isLogin">
+                  <li><router-link :to="{ name: 'mypage' }" class="dropdown-item">마이페이지</router-link></li>
+                  <li><a class="dropdown-item" href="#" @click="logout">로그아웃</a></li>
+                </div>
+                <div v-else>
+                  <li><router-link :to="{ name: 'signin' }" class="dropdown-item">로그인</router-link></li>
+                  <li><router-link :to="{ name: 'signup' }" class="dropdown-item">회원가입</router-link></li>
+                </div>
               </ul>
             </li>
           </ul>

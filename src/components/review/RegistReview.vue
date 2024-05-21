@@ -2,33 +2,29 @@
 import StarRating from "@/components/common/StarRating.vue";
 import { httpStatusCode } from "@/util/http-status";
 import { ref, reactive } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { writeReview } from "@/api/reviewAPI.js"
 
 const route = useRoute();
+const router = useRouter();
 
-// const props = defineProps(
-//     {
-//         tripDetailId: {
-//             type: int,
-//             required: true
-//         },
-//         contentId: {
-//             type: int,
-//             required: true
-//         },
-//         title: {
-//             type: String,
-//             required: true
-//         }
-//     }
-// )
+const props = defineProps(
+    {
+        tripDetailId: {
+            type: Number,
+            required: true
+        },
+        contentId: {
+            type: Number,
+            required: true
+        },
+        title: {
+            type: Number,
+            required: true
+        }
+    }
+)
 
-const props = reactive({
-    tripDetailId: 6,
-    contentId: 125266,
-    title: '국립 청태산자연휴양림'
-})
 
 const images = ref([]);
 const imagePreviews = ref([]);
@@ -75,14 +71,15 @@ const submitReview = () => {
         reviewTagList: tags,
         star: rating.value
     }
-    console.log(reviewData);
 
     writeReview(
         reviewData,
         (response) => {
             if (response.status == httpStatusCode.CREATE) {
                 alert("리뷰를 등록하셨습니다.")
-                // 페이지 리디렉션
+                router.push({
+                    name: "proceed"
+                });
             }
         },
         (error) => {
@@ -99,7 +96,7 @@ const submitReview = () => {
             <!-- 관광지 정보 제목 -->
             <div class="mb-3">
                 <label class="form-label">관광지 정보</label>
-                <input type="text" class="form-control" :value="props.title" disabled>
+                <input type="text" class="form-control" :value="title" disabled>
             </div>
 
             <!-- 사진 등록 -->

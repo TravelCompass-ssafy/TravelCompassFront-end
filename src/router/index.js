@@ -110,9 +110,10 @@ const router = createRouter({
       component: () => import("@/views/TheReviewView.vue"),
       children: [
         {
-          path: "regist",
+          path: "regist/:tripDetailId/:contentId/:title",
           name: "regist",
-          component: () => import("@/components/review/RegistReview.vue")
+          component: () => import("@/components/review/RegistReview.vue"),
+          props: true
         },
         {
           path: "list",

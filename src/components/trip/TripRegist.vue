@@ -11,6 +11,8 @@ const http = localAxios();
 const router = useRouter();
 const store = userStore();
 
+const selectedFile = ref(null);
+
 onMounted(() => {
     getSido();
 })
@@ -51,6 +53,10 @@ const deleteAttraction = (index, planIndex) => {
 
 const joinAble = ref(false);
 
+const onFileChange = (event) => {
+    selectedFile.value = event.target.files[0];
+}
+
 const registTrip = () => {
     const joinParams = {
         userId: store.userInfo.userId,
@@ -69,13 +75,30 @@ const registTrip = () => {
                 return;
             }
 
-            console.log(form.value);
-            http.post("/trip", form.value)
+            const formData = new FormData();
+
+            formData.append('title', form.value.title);
+            formData.append('userId', form.value.userId);
+            formData.append('userNickname', form.value.userNickname);
+            formData.append('sidoCode', form.value.sidoCode);
+            formData.append('startDate', form.value.startDate);
+            formData.append('endDate', form.value.endDate);
+            formData.append('maxCapacity', form.value.maxCapacity);
+            formData.append('content', form.value.content);
+            formData.append('tripPlanAttractionListJson', JSON.stringify(form.value.tripPlanAttractionList));
+            formData.append('image', selectedFile.value);
+
+            http.post("/trip", formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `${localStorage.getItem("accessToken")}`
+                }
+            })
                 .then((response) => {
                     router.push({ name: "trip" });
                 })
                 .catch((error) => {
-                console.log(error);
+                    console.log(error);
                 });
         })
 }
@@ -109,6 +132,8 @@ const dateRange = computed(() => {
 watch(dateRange, (newRange) => {
     form.value.tripPlanAttractionList = newRange.map(() => []);
 }, { immediate: true });
+
+
 </script>
 
 <template>
@@ -127,7 +152,8 @@ watch(dateRange, (newRange) => {
                 <label for="region" class="form-label">지역 선택</label>
                 <select class="form-select" id="region" v-model="form.sidoCode" required>
                     <option disabled value="">지역을 선택하세요</option>
-                    <option v-for="sido in sidoList" :key="sido.sidoCode" :value="sido.sidoCode">{{ sido.sidoName }}</option>
+                    <option v-for="sido in sidoList" :key="sido.sidoCode" :value="sido.sidoCode">{{ sido.sidoName }}
+                    </option>
                 </select>
             </div>
             <div class="mb-3">
@@ -152,12 +178,15 @@ watch(dateRange, (newRange) => {
                     <div class="mb-2" :id="planDate">
                         <label for="people" class="form-label">{{ planDate }}</label>
                     </div>
-                    <div v-for="(attraction, planIndex) in form.tripPlanAttractionList[index]" :key="attraction.contentId">
+                    <div v-for="(attraction, planIndex) in form.tripPlanAttractionList[index]"
+                        :key="attraction.contentId">
                         <label for="people" class="form-label">{{ attraction.title }}</label>
-                        <button type="button" @click="deleteAttraction(index, planIndex)" class="btn btn-danger">제거</button>
+                        <button type="button" @click="deleteAttraction(index, planIndex)"
+                            class="btn btn-danger">제거</button>
                     </div>
                     <div>
-                        <TripRegistPlanModal :index="index" :sido-list="sidoList" :plan-date="planDate" @add-attraction="addAttraction"></TripRegistPlanModal>
+                        <TripRegistPlanModal :index="index" :sido-list="sidoList" :plan-date="planDate"
+                            @add-attraction="addAttraction"></TripRegistPlanModal>
                     </div>
                 </template>
             </div>
