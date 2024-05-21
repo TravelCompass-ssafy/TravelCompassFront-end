@@ -1,6 +1,6 @@
 <script setup>
 import { localAxios } from "@/util/http-commons.js"
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import { userStore } from "@/stores/userStore.js"
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
@@ -25,18 +25,24 @@ const logout = () => {
   router.push({ name: "main" });
 }
 
-const proceedTrip = ref({})
+const proceedTrip = ref({ userId: -1})
 
 const getProceedTrip = () => {
-  http.get(`/trip/proceed/${userInfo.userId}`)
-    .then((response) => {
-      proceedTrip.value = response.data;
-      console.log(proceedTrip.value);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  if (isLogin.value) {
+    http.get(`/trip/proceed/${store.userInfo.userId}`)
+      .then((response) => {
+        proceedTrip.value = response.data;
+        console.log(proceedTrip.value);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 }
+
+watch(() => isLogin, (newLogin) => {
+  getProceedTrip();
+})
 
 const profileImageUrl = computed(() => {
   return isLogin.value ? import.meta.env.VITE_VUE_IMG_URL + userInfo.value.profile : noProfileImage;
@@ -56,7 +62,7 @@ const profileImageUrl = computed(() => {
         </button>
         <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
           <ul class="navbar-nav">
-            <li class="nav-item" v-if="proceedTrip">
+            <li class="nav-item" v-if="proceedTrip.userId !== -1">
               <router-link :to="{ name: 'proceed' }" class="nav-link">어디가니?</router-link>
             </li>
             <li class="nav-item">
