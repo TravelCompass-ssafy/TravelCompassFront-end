@@ -48,15 +48,36 @@ const deleteAttraction = (index, planIndex) => {
     form.value.tripPlanAttractionList[index].splice(planIndex, 1);
 }
 
+
+const joinAble = ref(false);
+
 const registTrip = () => {
-    console.log(form.value);
-    http.post("/trip", form.value)
-    .then((response) => {
-        router.push({ name: "trip" });
-    })
-    .catch((error) => {
-        console.log(error);
-    });
+    const joinParams = {
+        userId: store.userInfo.userId,
+        startDate: form.value.startDate,
+        endDate: form.value.endDate
+    }
+
+    console.log(joinParams);
+
+    http.get("/trip/checkjoinable", { params: joinParams })
+        .then((response) => {
+            joinAble.value = response.data;
+
+            if (!joinAble.value) {
+                alert("중복된 일정이 있습니다!");
+                return;
+            }
+
+            console.log(form.value);
+            http.post("/trip", form.value)
+                .then((response) => {
+                    router.push({ name: "trip" });
+                })
+                .catch((error) => {
+                console.log(error);
+                });
+        })
 }
 
 watch(() => form.value.endDate, (newEndDate, oldEndDate) => {

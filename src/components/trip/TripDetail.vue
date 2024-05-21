@@ -29,22 +29,6 @@ const getTripDetail = () => {
 
 const joinAble = ref(false);
 
-const updateJoinAble = async () => {
-    const joinParams = {
-    userId: store.userInfo.userId,
-    startDate: tripDetail.value.startDate,
-    endDate: tripDetail.value.endDate
-    }
-
-    console.log(joinParams);
-
-    http.get("/trip/checkjoinable", { params: joinParams })
-        .then((response) => {
-            joinAble.value = response.data;
-            console.log(joinAble.value);
-        })
-}
-
 const joinTrip = async () => {
     const joinParams = {
     userId: store.userInfo.userId,
