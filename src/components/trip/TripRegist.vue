@@ -103,17 +103,25 @@ const registTrip = () => {
         })
 }
 
+let disableWatchers = false;
+
 watch(() => form.value.endDate, (newEndDate, oldEndDate) => {
+    if (disableWatchers) return;
     if (form.value.startDate && form.value.startDate > newEndDate) {
         alert("날짜를 잘못 입력하였습니다.");
+        disableWatchers = true;
         form.value.endDate = oldEndDate;
+        disableWatchers = false;
     }
 });
 
 watch(() => form.value.startDate, (newStartDate, oldStartDate) => {
+    if (disableWatchers) return;
     if (form.value.endDate && form.value.endDate < newStartDate) {
         alert("날짜를 잘못 입력하였습니다.");
+        disableWatchers = true;
         form.value.startDate = oldStartDate;
+        disableWatchers = false;
     }
 });
 
