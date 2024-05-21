@@ -1,6 +1,6 @@
 <script setup>
 import { localAxios } from "@/util/http-commons.js"
-import { ref, onMounted, watch  } from "vue";
+import { ref, onMounted } from "vue";
 import { userStore } from "@/stores/userStore.js"
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
@@ -9,32 +9,35 @@ const http = localAxios();
 const router = useRouter();
 const store = userStore();
 
+const { userLogout } = store;
+
 onMounted(() => {
+  if (store.userInfo) {
+    userId = store.userInfo.userId;
+  }
+
   getProceedTrip();
 })
 
+const userId = ref('');
+
 const logout = () => {
+  userLogout();
   router.push({ name: "main" });
 }
 
 const proceedTrip = ref({})
 
 const getProceedTrip = () => {
-  console.log(store.userInfo.userId);
-
-  http.get(`/trip/proceed/${store.userInfo.userId}`)
+  http.get(`/trip/proceed/${userId.value}`)
     .then((response) => {
-        proceedTrip.value = response.data;
-        console.log(proceedTrip.value);
+      proceedTrip.value = response.data;
+      console.log(proceedTrip.value);
     })
     .catch((error) => {
-        console.log(error);
+      console.log(error);
     });
 }
-
-watch(() => store.userInfo.userId, (newUserId) => {
-  getProceedTrip();
-})
 </script>
 
 <template>
@@ -50,7 +53,7 @@ watch(() => store.userInfo.userId, (newUserId) => {
         </button>
         <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
           <ul class="navbar-nav">
-            <li class="nav-item" v-if="proceedTrip.userId === store.userInfo.userId">
+            <li class="nav-item" v-if="getProceedTrip">
               <router-link :to="{ name: 'proceed' }" class="nav-link">어디가니?</router-link>
             </li>
             <li class="nav-item">

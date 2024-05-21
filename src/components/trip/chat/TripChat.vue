@@ -7,10 +7,13 @@ import Stomp from "stompjs"
 import { format, parseISO, isSameDay } from 'date-fns'
 import { getMessages } from "@/api/chatAPI.js"
 
+const props = defineProps({
+    tripDetailId: Number,
+})
+
 const store = userStore();
 const { userInfo } = storeToRefs(store);
 
-const tripDetailId = ref(2);
 const messages = ref([]);
 const currentPage = ref(0);
 const pageSize = 5;
@@ -21,7 +24,7 @@ const isLoading = ref(false); // 로딩 상태 추적
 const userInitiatedScroll = ref(false); // 사용자가 스크롤을 했는지 추적
 
 const sendMessageForm = ref({
-    tripDetailId: tripDetailId.value,
+    tripDetailId: props.tripDetailId,
     userId: userInfo.value.userId,
     message: ""
 })
@@ -37,7 +40,7 @@ const loadMessages = async () => {
         size: pageSize
     }
     getMessages(
-        tripDetailId.value,
+        props.tripDetailId,
         params,
         ({ data }) => {
             if (data.length < pageSize) {
@@ -58,7 +61,7 @@ onMounted(() => {
     stompClient = Stomp.over(socket);
     stompClient.connect({}, frame => {
         console.log('Connected: ' + frame);
-        stompClient.subscribe(`/topic/messages/${tripDetailId.value}`, async (message) => {
+        stompClient.subscribe(`/topic/messages/${props.tripDetailId}`, async (message) => {
             const parsedMessage = JSON.parse(message.body);
             parsedMessage.createdAtFormatted = format(parseISO(parsedMessage.createdAt), 'yyyy-MM-dd HH:mm:ss');
             messages.value.push(parsedMessage);
@@ -142,7 +145,7 @@ const formattedMessages = computed(() => {
                             <img :src="'http://localhost' + message.profile" class="rounded-circle me-2"
                                 style="width: 40px; height: 40px;">
                             <div>
-                                <div><strong>{{ message.nickname }}</strong></div>
+                                <div><strong>{{ message.nickName }}</strong></div>
                                 <div>{{ message.message }}</div>
                                 <div><small>{{ format(parseISO(message.createdAt), 'HH:mm') }}</small></div>
                             </div>
@@ -152,8 +155,8 @@ const formattedMessages = computed(() => {
                                 <div>{{ message.message }}</div>
                                 <div><small>{{ format(parseISO(message.createdAt), 'HH:mm') }}</small></div>
                             </div>
-                            <img :src="'http://localhost' + message.profile" class="rounded-circle ms-2"
-                                style="width: 40px; height: 40px;">
+                            <!-- <img :src="'http://localhost' + message.profile" class="rounded-circle ms-2"
+                                style="width: 40px; height: 40px;"> -->
                         </div>
                     </template>
                 </li>
@@ -164,9 +167,7 @@ const formattedMessages = computed(() => {
                 placeholder="Message">
         </div>
         <button @click="sendMessage" class="btn btn-primary">Send</button>
-
     </div>
-
 </template>
 
 <style scoped>

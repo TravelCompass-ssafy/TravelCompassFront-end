@@ -2,8 +2,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
-import { signUpAPI, sendVerificationCodeAPI, emailVerifyAPI } from "@/api/userAPI.js"
-import { HttpStatusCode } from "axios";
+import { signUpAPI, sendVerificationCodeAPI, emailVerifyAPI, isEmailExistsAPI, isNickNameExistsAPI } from "@/api/userAPI.js"
 import { httpStatusCode } from "@/util/http-status"
 
 const router = useRouter();
@@ -20,10 +19,19 @@ const signUpForm = ref({
 const confirmPassword = ref("");
 const authNumber = ref("");
 const emailAuthNumberId = ref("");
+const isValidVerificationCode = ref(false);
+const emailValidCheck = ref(false);
+const nickNameValidCheck = ref(false);
 
 const signUp = async () => {
-    if (!confirmPassword) {
+    if (signUpForm.value.password !== confirmPassword.value) {
         alert("패스워드가 일치하지 않습니다.");
+    }
+    else if (emailValidCheck) {
+        alert("이미 존재하는 이메일입니다. \n기존 이메일을 이용해주세요!")
+    }
+    else if (nickNameValidCheck) {
+        alert("이미 존재하는 닉네임입니다. \n다른 닉네임을 사용해주세요!")
     }
     else {
         const data = {
@@ -31,17 +39,15 @@ const signUp = async () => {
             authNumber: authNumber.value
         }
 
-        let isEmailAuth = true;
+        let isEmailAuth = false;
         await emailVerifyAPI(
             data,
-            (response) => {
-                if (response.status == httpStatusCode.UNAUTHORIZED) {
-                    alert("이메일 인증에 실패하셨습니다.")
-                    isEmailAuth = false;
-                }
+            () => {
+                isEmailAuth = true;
             },
             (error) => {
-                console.log("이메일 인증 실패");
+                isValidVerificationCode.value = true;
+                alert("이메일 인증에 실패하셨습니다.");
             }
         )
 
@@ -55,6 +61,7 @@ const signUp = async () => {
                     }
                 },
                 (error) => {
+                    alert("회원가입에 실패하셨습니다.")
                     console.log("회원가입 실패");
                 }
             )
@@ -82,6 +89,40 @@ const sendVerificationCode = async () => {
         }
     )
 }
+
+const emailDuplicated = async () => {
+    await isEmailExistsAPI(
+        {
+            email: signUpForm.value.email
+        },
+        () => {
+            emailValidCheck.value = false;
+        },
+        (error) => {
+            if (error.response.status === httpStatusCode.CONFLICT) {
+                emailValidCheck.value = true;
+            }
+        }
+    )
+}
+
+const nickNameDuplicated = async () => {
+    console.log('sdkdk');
+    await isNickNameExistsAPI(
+        {
+            nickName: signUpForm.value.nickname
+        },
+        () => {
+            nickNameValidCheck.value = false;
+        },
+        (error) => {
+            console.error(error.response.status);
+            if (error.response.status === httpStatusCode.CONFLICT) {
+                nickNameValidCheck.value = true;
+            }
+        }
+    )
+}
 </script>
 
 <template>
@@ -91,12 +132,15 @@ const sendVerificationCode = async () => {
             <form @submit.prevent="signUp">
                 <div class="mb-3">
                     <label for="email" class="form-label">이메일</label>
-                    <input type="email" class="form-control" id="email" v-model="signUpForm.email" required>
+                    <input @blur="emailDuplicated" type="email" class="form-control" id="email"
+                        v-model="signUpForm.email" required>
+                    <div v-if="emailValidCheck" class="text-danger mt-1">이미 존재하는 이메일 입니다.</div>
                     <button type="button" class="btn btn-primary w-100 mt-2" @click="sendVerificationCode">인증하기</button>
                 </div>
                 <div class="mb-3">
                     <label for="verificationCode" class="form-label">인증번호</label>
                     <input type="text" class="form-control" id="verificationCode" v-model="authNumber" required>
+                    <div v-if="isValidVerificationCode" class="text-danger mt-1">인증번호를 확인해주세요.</div>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">비밀번호</label>
@@ -113,8 +157,10 @@ const sendVerificationCode = async () => {
                 </div>
                 <div class="mb-3">
                     <label for="nickname" class="form-label">닉네임</label>
-                    <input type="text" class="form-control" id="nickname" v-model="signUpForm.nickname" required
-                        pattern="^[A-Za-z0-9_]+$">
+                    <input @blur="nickNameDuplicated" type="text" class="form-control" id="nickname"
+                        v-model="signUpForm.nickname" required pattern="^[A-Za-z0-9_]+$"
+                        placeholder="영어, 숫자, _ 로 입력해주세요.">
+                    <div v-if="nickNameValidCheck" class="text-danger mt-1">이미 존재하는 닉네임 입니다.</div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">성별</label>
@@ -138,7 +184,7 @@ const sendVerificationCode = async () => {
                 <button type="submit" class="btn btn-success w-100">회원가입</button>
             </form>
             <div class="mt-3 text-center">
-                <a href="#" @click.prevent="goToLogin">로그인</a>
+                <router-link :to="{ name: 'signin' }">로그인</router-link>
             </div>
         </div>
     </div>

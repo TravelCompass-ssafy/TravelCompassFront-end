@@ -40,5 +40,24 @@ async function resetPasswordAPI(email, success, fail) {
   await local.patch(`/auth/resetPassword`, email).then(success).catch(fail);
 }
   
+async function isEmailExistsAPI(param, success, fail) {
+  await local.get(`/auth/emailCheck`, { params: { email: param.email } }).then(success).catch(fail);
+}
 
-export { signUpAPI, sendVerificationCodeAPI, emailVerifyAPI, userConfirm, findById, tokenRegeneration, logout, findEmailAPI, resetPasswordAPI };
+async function isNickNameExistsAPI(param, success, fail) {
+  await local.get(`/auth/nickNameCheck`, { params: { nickName: param.nickName } }).then(success).catch(fail);
+}
+
+export {
+  signUpAPI,
+  sendVerificationCodeAPI,
+  emailVerifyAPI,
+  userConfirm,
+  findById,
+  tokenRegeneration,
+  logout,
+  findEmailAPI,
+  resetPasswordAPI,
+  isEmailExistsAPI,
+  isNickNameExistsAPI
+};

@@ -23,7 +23,7 @@ const findEmail = async () => {
             }
         },
         (error) => {
-            if (response.status === httpStatusCode.NOTFOUND) {
+            if (error.response.status === httpStatusCode.NOTFOUND) {
                 alert("이메일이 존재하지 않습니다.")
             }
             else {
