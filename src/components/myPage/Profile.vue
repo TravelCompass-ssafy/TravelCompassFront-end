@@ -6,6 +6,9 @@ import { storeToRefs } from "pinia";
 import { updatePassword, updateNickName, updateIntroduction, updateProfileImage } from "@/api/myPageAPI";
 import { httpStatusCode } from "@/util/http-status";
 
+import MyPlanItem from "@/components/myPage/item/MyPlanItem.vue";
+import MyTripItem from "@/components/myPage/item/MyTripItem.vue";
+
 const { VITE_VUE_IMG_URL } = import.meta.env;
 
 const store = userStore();
@@ -22,6 +25,7 @@ const currentPassword = ref('');
 const newPassword = ref('');
 const confirmNewPassword = ref('');
 const selectedFile = ref(null);
+const selectType = ref('trip');
 
 const changePassword = () => {
     if (newPassword.value != confirmNewPassword.value) {
@@ -251,6 +255,20 @@ const changeProfile = () => {
             </div>
         </div>
     </div>
+    <div class="container mt-5">
+        <div class="d-flex justify-content-center mb-4">
+            <button @click="selectType = 'trip'" :class="{'btn-primary': selectType === 'trip', 'btn-secondary': selectType !== 'trip'}" class="btn mx-2">내 여행 계획</button>
+            <button @click="selectType = 'plan'" :class="{'btn-primary': selectType === 'plan', 'btn-secondary': selectType !== 'plan'}" class="btn mx-2">내 여행 공유</button>
+        </div>
+        <div>
+            <div v-if="selectType === 'trip'">
+                <my-trip-item />
+            </div>
+            <div v-else-if="selectType === 'plan'">
+                <my-plan-item />
+            </div>
+        </div>
+    </div>
 </template>
 
 <style scoped>
@@ -300,5 +318,18 @@ const changeProfile = () => {
     overflow: hidden;
     color: #ffc107;
     width: 0;
+}
+.btn {
+    min-width: 100px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
 }
 </style>
