@@ -4,6 +4,7 @@ import { defineStore } from 'pinia'
 import { jwtDecode } from "jwt-decode"
 
 import { userConfirm, findById, tokenRegeneration, logout } from "@/api/userAPI"
+import { isPoceedTrip } from "@/api/proceedAPI.js"
 import { httpStatusCode } from "@/util/http-status"
 
 
@@ -13,7 +14,8 @@ export const userStore = defineStore(
   const router = useRouter()
 
   const isLogin = ref(false)
-  const isLoginError = ref(false)
+    const isLoginError = ref(false)
+
   const userInfo = ref({
     userId: "",
     email: "",
@@ -26,9 +28,8 @@ export const userStore = defineStore(
     profile: ""
   })
 
-    
-    console.log(userInfo.value);
   const isValidToken = ref(false)
+  const isCurrentTrip = ref(false)
 
   const userLogin = async (loginUser) => {
     await userConfirm(
@@ -44,7 +45,7 @@ export const userStore = defineStore(
           localStorage.setItem("accessToken", accessToken)
           localStorage.setItem("refreshToken", refreshToken)
           userInfo.value = data.userInfo;
-         }
+        }
       },
       (error) => {
         console.log("로그인 실패");
@@ -52,7 +53,8 @@ export const userStore = defineStore(
         isLoginError.value = true
         isValidToken.value = false
       }
-    )
+    );
+    getProceedTrip();
   }
 
   const getUserInfo = async (token) => {
@@ -112,17 +114,28 @@ export const userStore = defineStore(
   }
 
   const userLogout = async () => {
-    console.log("로그아웃 아이디 : " + userInfo.value.userId)
     await logout(
       userInfo.value.userId,
       (response) => {
         if (response.status === httpStatusCode.OK) {
           isLogin.value = false
-          userInfo.value = null
+          userInfo.value = {
+            userId: "",
+            email: "",
+            username: "",
+            nickname: "",
+            gender: "",
+            birthday: "",
+            totalStar: "",
+            totalStarCount: "",
+            profile: ""
+          }
           isValidToken.value = false
+          isCurrentTrip.value = false
 
           localStorage.removeItem("accessToken")
           localStorage.removeItem("refreshToken")
+
         } else {
           console.error("유저 정보 없음!!!!")
         }
@@ -131,7 +144,23 @@ export const userStore = defineStore(
         console.log(error)
       }
     )
-  }
+    }
+    
+    const getProceedTrip = () => {
+      if (isLogin.value) {
+        isPoceedTrip(
+          userInfo.value.userId,
+          () => {
+            console.log("아아");
+            isCurrentTrip.value = true;
+          },
+          (error) => {
+            console.log("우우");
+            console.error(error);
+          }
+        )
+      }
+    }
 
   return {
     isLogin,
@@ -142,6 +171,7 @@ export const userStore = defineStore(
     getUserInfo,
     tokenRegenerate,
     userLogout,
+    isCurrentTrip
   }
   },
   {

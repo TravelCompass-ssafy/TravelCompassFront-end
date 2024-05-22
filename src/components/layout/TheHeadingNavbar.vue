@@ -8,42 +8,16 @@ import noProfileImage from "@/assets/noprofile.jpg"
 
 const { VITE_VUE_IMG_URL } = import.meta.env;
 
-const http = localAxios();
 const router = useRouter();
 const store = userStore();
 
 const { userLogout } = store;
-const { isLogin, userInfo } = storeToRefs(store);
-
-
-onMounted(() => {
-  if (isLogin) {
-    getProceedTrip();
-  }
-})
+const { isLogin, userInfo, isCurrentTrip } = storeToRefs(store);
 
 const logout = () => {
   userLogout();
   router.push({ name: "main" });
 }
-
-const proceedTrip = ref({ userId: -1 })
-
-const getProceedTrip = () => {
-  if (isLogin.value) {
-    http.get(`/trip/proceed/${store.userInfo.userId}`)
-      .then((response) => {
-        proceedTrip.value = response.data;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }
-}
-
-watch(() => isLogin, (newLogin) => {
-  getProceedTrip();
-})
 
 const profileImageUrl = computed(() => {
   return isLogin.value ? import.meta.env.VITE_VUE_IMG_URL + userInfo.value.profile : noProfileImage;
@@ -63,7 +37,7 @@ const profileImageUrl = computed(() => {
         </button>
         <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
           <ul class="navbar-nav">
-            <li class="nav-item" v-if="proceedTrip.userId !== -1">
+            <li class="nav-item" v-if="isCurrentTrip">
               <router-link :to="{ name: 'proceed' }" class="nav-link">어디가니?</router-link>
             </li>
             <li class="nav-item">
