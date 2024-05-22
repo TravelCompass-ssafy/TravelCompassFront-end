@@ -77,7 +77,7 @@ watch(() => attractionKey.value.sidoCode, (newSidoCode) => {
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addTripLabel">계획 추가</h5>{{index}}
+                    <h5 class="modal-title" id="addTripLabel">계획 추가</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="resetPlan"></button>
                 </div>
                 <div class="modal-body" style="max-height: 80vh;">

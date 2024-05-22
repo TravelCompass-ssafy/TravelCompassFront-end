@@ -7,6 +7,7 @@ import { BootstrapVue3 } from 'bootstrap-vue-3';
 
 import App from './App.vue';
 import router from './router';
+import { useKakao } from 'vue3-kakao-maps/@utils';
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import 'bootstrap-vue-3/dist/bootstrap-vue-3.css';
@@ -16,8 +17,10 @@ register();
 
 const app = createApp(App);
 const pinia = createPinia();
+const { VITE_VUE_KAKAOMAP_KEY } = import.meta.env;
 
 pinia.use(piniaPluginPersistedstate);
+useKakao(VITE_VUE_KAKAOMAP_KEY);
 
 app.use(pinia);
 app.use(router);

@@ -116,6 +116,17 @@ const showModal = (review) => {
     }
 };
 
+const deleteTrip = () => {
+    http.delete(`/trip/${tripDetail.value.tripDetailId}`)
+        .then((response) => {
+            console.log("삭제완료");
+            router.push({ name:'share-list' });
+        })
+        .catch((error) => {
+            console.log(errer);
+        })
+}
+
 </script>
 
 <template>
@@ -126,7 +137,12 @@ const showModal = (review) => {
                     <img :src="VITE_VUE_IMG_URL + '/' + tripDetail.imagePath" class="card-img-top img-fluid"
                         alt="Trip Image" style="max-height: 300px; object-fit: cover;">
                     <div class="card-body">
-                        <h3 class="card-title">{{ tripDetail.title }}</h3>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h3 class="card-title m-0">{{ tripDetail.title }}</h3>
+                            <template v-if="tripDetail.userId === store.userInfo.userId">
+                                <button type="button" @click="deleteTrip" class="btn btn-danger btn-sm">삭제</button>
+                            </template>
+                        </div>
                         <div class="mb-3">
                             <div class="d-flex flex-column align-items-start">
                                 <div>{{ tripDetail.view + 1 }} views</div>

@@ -1,5 +1,6 @@
 <script setup>
 import TripChat from "@/components/trip/chat/TripChat.vue";
+import TripUpdateModal from "@/components/trip/item/TripUpdateModal.vue"
 
 import { localAxios } from "@/util/http-commons.js"
 import { ref, onMounted } from "vue";
@@ -88,6 +89,17 @@ const joinTrip = async () => {
         })
 }
 
+const deleteTrip = () => {
+    http.delete(`/trip/${tripDetail.value.tripDetailId}`)
+        .then((response) => {
+            console.log("삭제완료");
+            router.push({ name:'trip-list' });
+        })
+        .catch((error) => {
+            console.log(errer);
+        })
+}
+
 </script>
 
 <template>
@@ -98,7 +110,13 @@ const joinTrip = async () => {
                     <img :src="VITE_VUE_IMG_URL + '/' + tripDetail.imagePath" class="card-img-top img-fluid"
                         alt="Trip Image" style="max-height: 300px; object-fit: cover;">
                     <div class="card-body">
-                        <h3 class="card-title">{{ tripDetail.title }}</h3>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h3 class="card-title m-0">{{ tripDetail.title }}</h3>
+                            <div v-if="tripDetail.userId === store.userInfo.userId">
+                                <trip-update-modal :trip-detail="tripDetail" @get-trip-detail="getTripDetail"/>
+                                <button type="button" @click="deleteTrip" class="btn btn-danger btn-sm">삭제</button>
+                            </div>
+                        </div>
                         <div class="mb-3">
                             <div class="d-flex flex-column align-items-start">
                                 <div>{{ tripDetail.view + 1 }} views</div>
