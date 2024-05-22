@@ -8,6 +8,7 @@ import { httpStatusCode } from "@/util/http-status";
 
 import MyPlanItem from "@/components/myPage/item/MyPlanItem.vue";
 import MyTripItem from "@/components/myPage/item/MyTripItem.vue";
+import MyReviewItem from "@/components/myPage/item/MyReviewItem.vue";
 
 const { VITE_VUE_IMG_URL } = import.meta.env;
 
@@ -160,13 +161,6 @@ const changeProfile = () => {
                     </p>
                     <p><strong>성별:</strong> {{ userInfo.gender }}</p>
                     <p><strong>생일:</strong> {{ userInfo.birthday }}</p>
-                    <div>
-                        <strong>사용자 별점:</strong>
-                        <div class="star-rating">
-                            <div class="filled-stars" :style="{ width: userInfo.rating * 10 + '%' }"></div>
-                            <div class="empty-stars"></div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -257,8 +251,15 @@ const changeProfile = () => {
     </div>
     <div class="container mt-5">
         <div class="d-flex justify-content-center mb-4">
-            <button @click="selectType = 'trip'" :class="{'btn-primary': selectType === 'trip', 'btn-secondary': selectType !== 'trip'}" class="btn mx-2">내 여행 계획</button>
-            <button @click="selectType = 'plan'" :class="{'btn-primary': selectType === 'plan', 'btn-secondary': selectType !== 'plan'}" class="btn mx-2">내 여행 공유</button>
+            <button @click="selectType = 'trip'"
+                :class="{ 'btn-primary': selectType === 'trip', 'btn-secondary': selectType !== 'trip' }"
+                class="btn mx-2">내 여행 계획</button>
+            <button @click="selectType = 'plan'"
+                :class="{ 'btn-primary': selectType === 'plan', 'btn-secondary': selectType !== 'plan' }"
+                class="btn mx-2">내 여행 공유</button>
+            <button @click="selectType = 'review'"
+                :class="{ 'btn-primary': selectType === 'review', 'btn-secondary': selectType !== 'review' }"
+                class="btn mx-2">내 리뷰</button>
         </div>
         <div>
             <div v-if="selectType === 'trip'">
@@ -266,6 +267,9 @@ const changeProfile = () => {
             </div>
             <div v-else-if="selectType === 'plan'">
                 <my-plan-item />
+            </div>
+            <div v-else>
+                <MyReviewItem />
             </div>
         </div>
     </div>
@@ -319,6 +323,7 @@ const changeProfile = () => {
     color: #ffc107;
     width: 0;
 }
+
 .btn {
     min-width: 100px;
 }

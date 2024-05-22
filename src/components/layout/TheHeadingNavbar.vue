@@ -3,7 +3,6 @@ import { ref, onMounted, computed, watch } from "vue";
 import { userStore } from "@/stores/userStore.js";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
-import axios from "axios";
 import noProfileImage from "@/assets/noprofile.jpg";
 
 const { VITE_VUE_IMG_URL, VITE_API_URL, VITE_VUE_SSE_URL } = import.meta.env;
@@ -20,14 +19,12 @@ const logout = () => {
 };
 
 const profileImageUrl = computed(() => {
-  return isLogin.value ? import.meta.env.VITE_VUE_IMG_URL + userInfo.value.profile : noProfileImage;
+  return isLogin.value ? VITE_VUE_IMG_URL + userInfo.value.profile : noProfileImage;
 });
 
 // 알람 관련 상태 변수
 const notifications = ref([]);
 const unreadCount = ref(0);
-
-const toasts = ref([]);
 
 // SSE 연결 함수
 const connectSSE = () => {
@@ -39,29 +36,22 @@ const connectSSE = () => {
   sse.addEventListener('connect', e => {
     const { data } = e;
     console.log(data);
-  })
+  });
 
   sse.addEventListener('notifyJoinTripMember', e => {
     const { data } = e;
-    console.log(data);
     notifications.value.push(data);
     unreadCount.value++;
     showToast(data);
-  })
+  });
 
   sse.onerror = () => {
     sse.close();
+    setTimeout(() => {
+      connectSSE();
+    }, 3000); // 3초 후에 다시 연결 시도
   };
 };
-
-const showToast = (message) => {
-  const id = Date.now();
-  toasts.value.push({ id, message });
-  setTimeout(() => {
-    toasts.value = toasts.value.filter((toast) => toast.id !== id);
-  }, 5000); // 5초 후에 자동으로 사라지게 설정
-};
-
 
 onMounted(() => {
   connectSSE();
@@ -83,8 +73,8 @@ const markAllAsRead = () => {
   <div>
     <nav class="navbar navbar-expand-lg">
       <div class="container">
-        <router-link :to="{ name: 'main' }" class="nav-link">
-          <a class="navbar-brand" href="#"><img src="@/assets/logo2.png" style="width: 100px; height: auto;" /></a>
+        <router-link :to="{ name: 'main' }" class="navbar-brand">
+          <img src="@/assets/logo2.png" style="width: 100px; height: auto;" />
         </router-link>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
           aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -104,6 +94,25 @@ const markAllAsRead = () => {
             <li class="nav-item">
               <router-link :to="{ name: 'list' }" class="nav-link">발자취</router-link>
             </li>
+            <!-- 알람 아이콘 -->
+            <li v-if="isLogin" class="nav-item dropdown">
+              <a class="nav-link" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <img src="@/assets/alarmBell.png" style="width: 2rem; height: 2rem; object-fit: cover" />
+                <span v-if="unreadCount.value > 0" class="badge bg-danger">{{ unreadCount.value }}</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
+                <li>
+                  <a class="dropdown-item" href="#" @click="markAllAsRead">모두 읽음 표시</a>
+                </li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li v-for="(notification, index) in notifications.value" :key="index" class="dropdown-item">
+                  {{ notification }}
+                </li>
+              </ul>
+            </li>
             <li class="nav-item dropdown">
               <img class="nav-link dropdown-toggle rounded-circle" :src="profileImageUrl" id="navbarDropdown"
                 role="button" data-bs-toggle="dropdown" aria-expanded="false"
@@ -119,72 +128,20 @@ const markAllAsRead = () => {
                 </div>
               </ul>
             </li>
-            <!-- 알람 아이콘 -->
-            <li class="nav-item dropdown">
-              <a class="nav-link" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                <img src="@/assets/alarmBell.png" style="width: 3rem; height: 3rem; object-fit: cover" />
-                <span v-if="unreadCount > 0" class="badge bg-danger">{{ unreadCount }}</span>
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
-                <li>
-                  <a class="dropdown-item" href="#" @click="markAllAsRead">모두 읽음 표시</a>
-                </li>
-                <li>
-                  <hr class="dropdown-divider">
-                </li>
-                <li v-for="(notification, index) in notifications" :key="index" class="dropdown-item">
-                  {{ notification }}
-                </li>
-              </ul>
-            </li>
+
           </ul>
         </div>
       </div>
     </nav>
-
-    <!-- 토스트 알림 컨테이너 -->
-    <div class="toast-container">
-      <div v-for="toast in toasts" :key="toast.id" class="toast">
-        <div class="toast-message">{{ toast.message }}</div>
-        <div class="close" @click="() => toasts.value = toasts.value.filter(t => t.id !== toast.id)">✕</div>
-      </div>
-    </div>
-
   </div>
 </template>
 
 <style scoped>
 .badge {
   position: absolute;
-  top: 10px;
-  right: 10px;
-}
-
-.toast-container {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1050;
-}
-
-.toast {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  margin-bottom: 10px;
-  background-color: #343a40;
-  color: white;
-  border-radius: 5px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.toast .toast-message {
-  margin-left: 10px;
-}
-
-.toast .close {
-  margin-left: auto;
-  cursor: pointer;
+  top: 5px;
+  right: 5px;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
 }
 </style>

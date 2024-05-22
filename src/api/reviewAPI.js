@@ -52,6 +52,10 @@ async function getReviewById(reviewId, success, fail) {
     local.get(`/review/${reviewId}`).then(success).catch(fail);
 }
 
+async function getReviewByUserId(userId, success, fail) {
+    local.get(`/review/user/${userId}`).then(success).catch(fail);
+}
+
 async function deleteReview(reviewId, success, fail) {
     local.defaults.headers["Authorization"] = localStorage.getItem("accessToken");
     local.delete(`/review/${reviewId}`).then(success).catch(fail);
@@ -88,5 +92,6 @@ export {
     writeComment,
     getReviewById,
     deleteReview,
-    updateReview
+    updateReview,
+    getReviewByUserId
 }

@@ -5,6 +5,7 @@ import { userStore } from "@/stores/userStore.js";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import { Modal } from 'bootstrap';
+import { deleteReview } from '@/api/reviewAPI.js';
 
 const { VITE_VUE_IMG_URL } = import.meta.env;
 
@@ -12,7 +13,7 @@ const http = localAxios();
 const router = useRouter();
 const store = userStore();
 
-const { userInfo } = storeToRefs(store);
+const { isLogin, userInfo } = storeToRefs(store);
 
 const proceedTrip = ref({});
 const reviews = ref([]);
@@ -20,6 +21,7 @@ const selectedReview = ref({
     profile: ""
 });
 let modalInstance = null;
+const isOwner = ref(false);
 
 onMounted(() => {
     getProceedTrip();
@@ -44,18 +46,41 @@ const getReviews = () => {
     http.get(`/review/trip/${proceedTrip.value.tripDetailId}`)
         .then((response) => {
             reviews.value = response.data;
+
         })
         .catch((error) => {
             console.log(error);
         });
 };
 
+const deleteReviewById = async (reviewId) => {
+    deleteReview(
+        reviewId,
+        () => {
+            reviews.value = reviews.value.filter(review => review.tripReviewId !== reviewId);
+            hideModal();
+        },
+        (error) => {
+            console.error(error);
+        }
+    );
+}
+
 const showModal = (review) => {
     selectedReview.value = review;
+    if (isLogin) {
+        isOwner.value = review.userId === userInfo.value.userId;
+    }
     if (modalInstance) {
         modalInstance.show();
     }
 };
+
+const hideModal = () => {
+    if (modalInstance) {
+        modalInstance.hide();
+    }
+}
 </script>
 
 <template>
@@ -115,7 +140,19 @@ const showModal = (review) => {
                         <h5 class="modal-title" id="reviewModalLabel"><span class="text-muted"><img
                                     src="@/assets/location.png" width="20" height="20" />{{
                                         selectedReview.attractionTitle }} </span></h5>
+                        <div v-if="isOwner" class="menu-container">
+                            <img src="@/assets/menu.png" class="menu-icon"
+                                @click="selectedReview.showMenu = !selectedReview.showMenu" />
+                            <div v-if="selectedReview.showMenu" class="menu-dropdown">
+                                <router-link @click="hideModal"
+                                    :to="{ name: 'updateReview', params: { tripReviewId: selectedReview.tripReviewId } }"
+                                    class="dropdown-item">수정</router-link>
+                                <button @click="deleteReviewById(selectedReview.tripReviewId)"
+                                    class="dropdown-item">삭제</button>
+                            </div>
+                        </div>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
                     </div>
                     <div class="modal-body">
                         <div class="card-header d-flex align-items-center">
@@ -174,5 +211,39 @@ const showModal = (review) => {
 .image-slide img {
     max-width: 100%;
     max-height: 300px;
+}
+
+/* 메뉴 아이콘 및 드롭다운 스타일 */
+.menu-container {
+    position: relative;
+}
+
+.menu-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.menu-dropdown {
+    position: absolute;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.menu-dropdown .dropdown-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    text-align: left;
+    color: #333;
+}
+
+.menu-dropdown .dropdown-item:hover {
+    background-color: #f0f0f0;
 }
 </style>
