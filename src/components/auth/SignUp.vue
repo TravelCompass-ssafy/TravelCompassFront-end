@@ -62,7 +62,7 @@ const signUp = async () => {
                 },
                 (error) => {
                     alert("회원가입에 실패하셨습니다.")
-                    console.log("회원가입 실패");
+                    console.error("회원가입 실패");
                 }
             )
         }
@@ -107,7 +107,6 @@ const emailDuplicated = async () => {
 }
 
 const nickNameDuplicated = async () => {
-    console.log('sdkdk');
     await isNickNameExistsAPI(
         {
             nickName: signUpForm.value.nickname

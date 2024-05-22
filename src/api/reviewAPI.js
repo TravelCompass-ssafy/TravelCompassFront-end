@@ -40,7 +40,7 @@ async function likeReview(reviewId, success, fail) {
 
 async function writeCommentReply(reviewId, commentId, reply, success, fail) {
     local.defaults.headers["Authorization"] = localStorage.getItem("accessToken");
-    local.post(`/review/${reviewId}/comment/${commentId}/reply`, reply).then(success).catch(fail);
+    local.post(`/review/t${reviewId}/comment/${commentId}/reply`, reply).then(success).catch(fail);
 }
 
 async function writeComment(reviewId, comment, success, fail) {
@@ -48,4 +48,45 @@ async function writeComment(reviewId, comment, success, fail) {
     local.post(`/review/${reviewId}/comment`, comment).then(success).catch(fail);
 }
 
-export { writeReview, getReviews, getComments, likeReview, writeCommentReply, writeComment }
+async function getReviewById(reviewId, success, fail) {
+    local.get(`/review/${reviewId}`).then(success).catch(fail);
+}
+
+async function deleteReview(reviewId, success, fail) {
+    local.defaults.headers["Authorization"] = localStorage.getItem("accessToken");
+    local.delete(`/review/${reviewId}`).then(success).catch(fail);
+}
+
+async function updateReview(reviewId, reviewData, success, fail) {
+    const formData = new FormData();
+
+    formData.append('content', reviewData.content);
+    formData.append('star', reviewData.star);
+
+    reviewData.reviewImageList.forEach((image, index) => {
+        formData.append(`reviewImageList[${index}]`, image);
+    });
+
+    reviewData.reviewTagList.forEach((tag, index) => {
+        formData.append(`reviewTagList[${index}]`, tag);
+    })
+
+    local.put(`/review/${reviewId}`, reviewData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `${localStorage.getItem("accessToken")}`
+        }
+    }).then(success).catch(fail);
+}
+
+export {
+    writeReview,
+    getReviews,
+    getComments,
+    likeReview,
+    writeCommentReply,
+    writeComment,
+    getReviewById,
+    deleteReview,
+    updateReview
+}

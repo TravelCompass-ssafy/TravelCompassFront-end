@@ -1,10 +1,15 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
-import { getReviews, getComments, likeReview, writeComment, writeCommentReply } from '@/api/reviewAPI.js';
+import { getReviews, getComments, likeReview, writeComment, writeCommentReply, deleteReview } from '@/api/reviewAPI.js';
 import { httpStatusCode } from "@/util/http-status";
-import { format } from 'date-fns'; // date-fns 라이브러리 import
+import { format } from 'date-fns';
+import { storeToRefs } from "pinia";
+import { userStore } from "@/stores/userStore.js"
+import { useRouter } from "vue-router";
 
+const store = userStore();
 const { VITE_VUE_IMG_URL } = import.meta.env;
+const { isLogin, userInfo } = storeToRefs(store);
 
 const reviews = ref([]);
 const isLoading = ref(false);
@@ -202,6 +207,27 @@ const searchReviews = () => {
     loadReviews();
 }
 
+const deleteReviewById = async (reviewId) => {
+    deleteReview(
+        reviewId,
+        () => {
+            reviews.value = reviews.value.filter(review => review.tripReviewId !== reviewId);
+        },
+        (error) => {
+            console.error(error);
+        }
+    );
+}
+
+const isReviewOwner = (review) => {
+    if (isLogin) {
+        return review.userId === userInfo.value.userId;
+    }
+    else {
+        return false;
+    }
+}
+
 </script>
 
 <template>
@@ -228,14 +254,27 @@ const searchReviews = () => {
                 </div>
 
                 <div v-for="(review, index) in reviews" :key="review.id" class="card mb-4">
-                    <div class="card-header d-flex align-items-center">
-                        <img :src="VITE_VUE_IMG_URL + review.profile" class="rounded-circle me-3" width="50"
-                            height="50" />
-                        <div>
-                            <h5 class="mb-0">{{ review.nickName }}</h5>
-                            <small class="text-muted">{{ formatDate(review.createdAt) }}</small>
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <img :src="VITE_VUE_IMG_URL + review.profile" class="rounded-circle me-3" width="50"
+                                height="50" />
+                            <div>
+                                <h5 class="mb-0">{{ review.nickName }}</h5>
+                                <small class="text-muted">{{ formatDate(review.createdAt) }}</small>
+                            </div>
+                        </div>
+                        <div v-if="isReviewOwner(review)" class="menu-container">
+                            <img src="@/assets/menu.png" class="menu-icon"
+                                @click="review.showMenu = !review.showMenu" />
+                            <div v-if="review.showMenu" class="menu-dropdown">
+                                <router-link
+                                    :to="{ name: 'updateReview', params: { tripReviewId: review.tripReviewId } }"
+                                    class="dropdown-item">수정</router-link>
+                                <button @click="deleteReviewById(review.tripReviewId)" class="dropdown-item">삭제</button>
+                            </div>
                         </div>
                     </div>
+
                     <div class="card-body">
                         <h5 class="card-title">{{ review.title }}</h5>
                         <div class="d-flex align-items-center justify-content-between mb-3">
@@ -384,5 +423,39 @@ const searchReviews = () => {
     font-size: 1.25rem;
     color: #ffcc00;
     margin-right: 10px;
+}
+
+/* 메뉴 아이콘 및 드롭다운 스타일 */
+.menu-container {
+    position: relative;
+}
+
+.menu-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.menu-dropdown {
+    position: absolute;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.menu-dropdown .dropdown-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    text-align: left;
+    color: #333;
+}
+
+.menu-dropdown .dropdown-item:hover {
+    background-color: #f0f0f0;
 }
 </style>

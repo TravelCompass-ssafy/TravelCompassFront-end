@@ -19,13 +19,10 @@ onMounted(() => {
 })
 
 const upCountView = () => {
-    console.log(route.params.tripDetailId);
     http.put(`/trip/view/${route.params.tripDetailId}`)
         .then((response) => {
-            console.log(route.params.tripDetailId);
         })
         .catch((error) => {
-            console.log(error);
         });
 }
 
@@ -49,8 +46,6 @@ const joinTrip = async () => {
         startDate: tripDetail.value.startDate,
         endDate: tripDetail.value.endDate
     }
-
-    console.log(joinParams);
 
     http.get("/trip/checkjoinable", { params: joinParams })
         .then((response) => {

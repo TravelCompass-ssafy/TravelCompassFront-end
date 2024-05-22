@@ -19,8 +19,6 @@ const loginUser = ref({
 const login = async () => {
     await userLogin(loginUser.value)
     let token = localStorage.getItem("accessToken")
-    console.log(token)
-    console.log("isLogin: " + isLogin.value)
     if (isLogin.value) {
         getUserInfo(token)
         router.replace("/")

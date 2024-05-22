@@ -119,6 +119,12 @@ const router = createRouter({
           path: "list",
           name: "list",
           component: () => import("@/components/review/ReviewList.vue")
+        },
+        {
+          path: "updateReview/:tripReviewId",
+          name: "updateReview",
+          component: () => import("@/components/review/ReviewUpdate.vue"),
+          props: true
         }
       ]
     },

@@ -5,10 +5,8 @@ import { userStore } from "@/stores/userStore.js";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import { Modal } from 'bootstrap';
-import { log } from "sockjs-client/dist/sockjs";
 
 const { VITE_VUE_IMG_URL } = import.meta.env;
-
 
 const http = localAxios();
 const router = useRouter();
@@ -16,23 +14,25 @@ const store = userStore();
 
 const { userInfo } = storeToRefs(store);
 
-onMounted(() => {
-    getProceedTrip();
-});
-
 const proceedTrip = ref({});
 const reviews = ref([]);
-const selectedReview = ref(null);
+const selectedReview = ref({
+    profile: ""
+});
 let modalInstance = null;
+
+onMounted(() => {
+    getProceedTrip();
+    const modalEl = document.getElementById('reviewModal');
+    if (modalEl) {
+        modalInstance = new Modal(modalEl);
+    }
+});
 
 const getProceedTrip = () => {
     http.get(`/trip/proceed/${userInfo.value.userId}`)
         .then((response) => {
-
-            console.log(userInfo.value.userId);
-            console.log("안녕", response.data);
             proceedTrip.value = response.data;
-
             getReviews();
         })
         .catch((error) => {
@@ -41,7 +41,7 @@ const getProceedTrip = () => {
 };
 
 const getReviews = () => {
-    http.get(`/review/${proceedTrip.value.tripDetailId}`)
+    http.get(`/review/trip/${proceedTrip.value.tripDetailId}`)
         .then((response) => {
             reviews.value = response.data;
         })
@@ -52,14 +52,10 @@ const getReviews = () => {
 
 const showModal = (review) => {
     selectedReview.value = review;
-    modalInstance.show();
+    if (modalInstance) {
+        modalInstance.show();
+    }
 };
-
-// Modal instance creation
-onMounted(() => {
-    const modalEl = document.getElementById('reviewModal');
-    modalInstance = new Modal(modalEl);
-});
 </script>
 
 <template>
@@ -116,14 +112,39 @@ onMounted(() => {
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="reviewModalLabel">리뷰</h5>
+                        <h5 class="modal-title" id="reviewModalLabel"><span class="text-muted"><img
+                                    src="@/assets/location.png" width="20" height="20" />{{
+                                        selectedReview.attractionTitle }} </span></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <h5>{{ selectedReview?.title }}</h5>
-                        <p>{{ selectedReview?.content }}</p>
-                        <div v-for="image in selectedReview?.reviewImageList" :key="image" class="mb-2">
-                            <img :src="VITE_VUE_IMG_URL + image" alt="Review Image" class="img-fluid">
+                        <div class="card-header d-flex align-items-center">
+                            <img :src="VITE_VUE_IMG_URL + selectedReview.profile" class="rounded-circle me-3" width="50"
+                                height="50" />
+                            <div>
+                                <h5 class="mb-0">{{ selectedReview.nickName }}</h5>
+                                <small class="text-muted">{{ selectedReview.createdAt }}</small>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ selectedReview.title }}</h5>
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+
+                                <span class="star-rating">{{ selectedReview.star }}⭐</span>
+                            </div>
+                            <div class="image-slider">
+                                <div v-for="(image, imageIndex) in selectedReview.reviewImageList" :key="imageIndex"
+                                    class="image-slide">
+                                    <img :src="VITE_VUE_IMG_URL + image" class="img-fluid" />
+                                </div>
+                            </div>
+                            <p class="card-text mt-3">{{ selectedReview.content }}</p>
+                            <p>
+                                <span v-for="(tag, tagIndex) in selectedReview.reviewTagList" :key="tagIndex"
+                                    class="badge bg-primary me-1">
+                                    {{ tag }}
+                                </span>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -135,5 +156,23 @@ onMounted(() => {
 <style scoped>
 .review-thumbnail {
     cursor: pointer;
+}
+
+.image-slider {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+.image-slide {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    margin-right: 10px;
+}
+
+.image-slide img {
+    max-width: 100%;
+    max-height: 300px;
 }
 </style>

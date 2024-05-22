@@ -64,8 +64,6 @@ const registTrip = () => {
         endDate: form.value.endDate
     }
 
-    console.log(joinParams);
-
     http.get("/trip/checkjoinable", { params: joinParams })
         .then((response) => {
             joinAble.value = response.data;

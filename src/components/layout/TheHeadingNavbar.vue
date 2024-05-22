@@ -17,7 +17,9 @@ const { isLogin, userInfo } = storeToRefs(store);
 
 
 onMounted(() => {
-  getProceedTrip();
+  if (isLogin) {
+    getProceedTrip();
+  }
 })
 
 const logout = () => {
@@ -25,17 +27,16 @@ const logout = () => {
   router.push({ name: "main" });
 }
 
-const proceedTrip = ref({ userId: -1})
+const proceedTrip = ref({ userId: -1 })
 
 const getProceedTrip = () => {
   if (isLogin.value) {
     http.get(`/trip/proceed/${store.userInfo.userId}`)
       .then((response) => {
         proceedTrip.value = response.data;
-        console.log(proceedTrip.value);
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   }
 }
