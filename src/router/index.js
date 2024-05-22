@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import TheMainView from "@/views/TheMainView.vue"
 import TripChat from "@/components/trip/chat/TripChat.vue"
+import ChatBot from "@/components/openai/ChatBot.vue"
 
 import { storeToRefs } from "pinia";
 
@@ -26,6 +27,11 @@ const onlyAuthUser = async (to, from, next) => {
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: "/chatBot",
+      name: "chatBot",
+      component: ChatBot
+   },
     {
       path: "/",
       name: "main",
