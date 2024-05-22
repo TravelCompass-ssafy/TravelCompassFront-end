@@ -1,10 +1,10 @@
 <script setup>
-
+import MainPageView from "@/components/main/MainPageView.vue";
 </script>
 
 <template>
     <div>
-        <RouterView />
+        <MainPageView />
     </div>
 </template>
 
