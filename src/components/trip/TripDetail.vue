@@ -6,6 +6,8 @@ import { localAxios } from "@/util/http-commons.js"
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { userStore } from '@/stores/userStore.js'
+import { joinTripAlaram } from "@/api/alarmAPI";
+import { jwtDecode } from "jwt-decode"
 
 const { VITE_VUE_IMG_URL } = import.meta.env;
 
@@ -79,6 +81,16 @@ const joinTrip = async () => {
                 }
             })
                 .then((response) => {
+                    console.log(tripDetail.value.tripDetailId);
+                    joinTripAlaram(
+                        tripDetail.value.tripDetailId,
+                        () => {
+                            console.log("알람 송신");
+                        },
+                        (error) => {
+                            console.error(error);
+                        }
+                    )
                     getTripDetail();
                     alert("동행하였습니다!");
                 })
@@ -93,7 +105,7 @@ const deleteTrip = () => {
     http.delete(`/trip/${tripDetail.value.tripDetailId}`)
         .then((response) => {
             console.log("삭제완료");
-            router.push({ name:'trip-list' });
+            router.push({ name: 'trip-list' });
         })
         .catch((error) => {
             console.log(errer);
@@ -113,7 +125,7 @@ const deleteTrip = () => {
                         <div class="d-flex justify-content-between align-items-center">
                             <h3 class="card-title m-0">{{ tripDetail.title }}</h3>
                             <div v-if="tripDetail.userId === store.userInfo.userId">
-                                <trip-update-modal :trip-detail="tripDetail" @get-trip-detail="getTripDetail"/>
+                                <trip-update-modal :trip-detail="tripDetail" @get-trip-detail="getTripDetail" />
                                 <button type="button" @click="deleteTrip" class="btn btn-danger btn-sm">삭제</button>
                             </div>
                         </div>

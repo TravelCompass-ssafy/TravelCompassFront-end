@@ -25,7 +25,7 @@ const replyCommentForm = reactive({ content: '' });
 const activeReplyToComment = ref(null);
 
 const searchKeyword = ref('');
-const selectedCategory = ref(null);
+const selectedCategory = ref("");
 
 const scrollObserver = ref(null);
 const commentsScrollObserver = ref(null);
@@ -233,8 +233,7 @@ const isReviewOwner = (review) => {
 <template>
     <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-md-4">
-
+            <div class="col-md-5">
                 <!-- 검색 및 필터 UI -->
                 <div class="d-flex align-items-center mb-4 p-3 shadow-sm rounded">
                     <select v-model="selectedCategory" class="form-select me-2" style="flex: 1;">
