@@ -1,12 +1,17 @@
 <script setup>
 import { localAxios } from "@/util/http-commons.js"
 import { ref, onMounted } from "vue";
+import { userStore } from "@/stores/userStore.js";
+import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 
 const { VITE_VUE_IMG_URL } = import.meta.env;
 
 const http = localAxios();
 const router = useRouter();
+const store = userStore();
+
+const { isLogin } = storeToRefs(store);
 
 onMounted(() => {
     getSido();
@@ -48,9 +53,11 @@ const getTripDetailList = () => {
 <template>
     <div class="container mt-5">
         <div class="d-flex justify-content-between align-items-center mb-3 ml-3">
-            <router-link :to="{ name: 'trip-regist' }" class="nav-link">
+            <div v-if="isLogin">
+              <router-link :to="{ name: 'trip-regist' }" class="nav-link">
                 <button class="btn btn-primary">글 쓰기</button>
-            </router-link>
+              </router-link>
+            </div>  
             <div class="d-flex flex-grow-1 justify-content-end align-items-center">
                 <div class="me-2">
                     <input type="date" class="form-control" id="date" v-model="searchData.date">
@@ -77,7 +84,7 @@ const getTripDetailList = () => {
                     <router-link :to="{ name: 'trip-detail', params: { tripDetailId: tripDetail.tripDetailId } }"
                         class="nav-link">
                         <div class="card">
-                            <img :src="VITE_VUE_IMG_URL + '/' + tripDetail.imagePath" class="card-img-top"
+                            <img :src="VITE_VUE_IMG_URL + tripDetail.imagePath" class="card-img-top trip-image"
                                 alt="Trip Image">
                             <div class="card-body">
                                 <h5 class="card-title">{{ tripDetail.title }}</h5>
@@ -106,4 +113,9 @@ const getTripDetailList = () => {
 
 </template>
 
-<style scoped></style>
+<style scoped>
+.trip-image {
+    height: 200px;
+    object-fit: cover;
+}
+</style>

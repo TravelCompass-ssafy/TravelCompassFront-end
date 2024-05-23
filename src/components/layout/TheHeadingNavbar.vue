@@ -42,7 +42,6 @@ const connectSSE = () => {
     const { data } = e;
     notifications.value.push(data);
     unreadCount.value++;
-    showToast(data);
   });
 
   sse.onerror = () => {
@@ -64,6 +63,7 @@ onMounted(() => {
 
 const markAllAsRead = () => {
   unreadCount.value = 0;
+  notifications.value = [];
 };
 
 </script>
@@ -99,7 +99,7 @@ const markAllAsRead = () => {
               <a class="nav-link" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown"
                 aria-expanded="false">
                 <img src="@/assets/alarmBell.png" style="width: 2rem; height: 2rem; object-fit: cover" />
-                <span v-if="unreadCount.value > 0" class="badge bg-danger">{{ unreadCount.value }}</span>
+                <span v-if="unreadCount > 0" class="badge bg-danger">{{ unreadCount }}</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
                 <li>
@@ -108,7 +108,7 @@ const markAllAsRead = () => {
                 <li>
                   <hr class="dropdown-divider">
                 </li>
-                <li v-for="(notification, index) in notifications.value" :key="index" class="dropdown-item">
+                <li v-for="(notification, index) in notifications" :key="index" class="dropdown-item">
                   {{ notification }}
                 </li>
               </ul>

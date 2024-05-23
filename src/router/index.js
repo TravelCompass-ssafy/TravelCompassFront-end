@@ -1,7 +1,7 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import TheMainView from "@/views/TheMainView.vue"
-import TripChat from "@/components/trip/chat/TripChat.vue"
-import ChatBot from "@/components/openai/ChatBot.vue"
+import { createRouter, createWebHistory } from "vue-router";
+import TheMainView from "@/views/TheMainView.vue";
+import TripChat from "@/components/trip/chat/TripChat.vue";
+import ChatBot from "@/components/openai/ChatBot.vue";
 
 import { storeToRefs } from "pinia";
 
@@ -30,8 +30,8 @@ const router = createRouter({
     {
       path: "/chatBot",
       name: "chatBot",
-      component: ChatBot
-   },
+      component: ChatBot,
+    },
     {
       path: "/",
       name: "main",
@@ -46,19 +46,19 @@ const router = createRouter({
         {
           path: "trip-list",
           name: "trip-list",
-          component: () => import("@/components/trip/TripList.vue")
+          component: () => import("@/components/trip/TripList.vue"),
         },
         {
           path: "trip-regist",
           name: "trip-regist",
-          component: () => import("@/components/trip/TripRegist.vue")
+          component: () => import("@/components/trip/TripRegist.vue"),
         },
         {
           path: "trip-detail/:tripDetailId",
           name: "trip-detail",
-          component: () => import("@/components/trip/TripDetail.vue")
+          component: () => import("@/components/trip/TripDetail.vue"),
         },
-      ]
+      ],
     },
     {
       path: "/auth",
@@ -84,8 +84,8 @@ const router = createRouter({
           path: "signup",
           name: "signup",
           component: () => import("@/components/auth/SignUp.vue"),
-        }
-      ]
+        },
+      ],
     },
     {
       path: "/proceed/",
@@ -101,14 +101,14 @@ const router = createRouter({
         {
           path: "share-list",
           name: "share-list",
-          component: () => import("@/components/share/ShareList.vue")
+          component: () => import("@/components/share/ShareList.vue"),
         },
         {
           path: "share/:tripDetailId",
           name: "share-detail",
-          component: () => import("@/components/share/ShareDetail.vue")
+          component: () => import("@/components/share/ShareDetail.vue"),
         },
-      ]
+      ],
     },
     {
       path: "/review",
@@ -119,20 +119,20 @@ const router = createRouter({
           path: "regist/:tripDetailId/:contentId/:title",
           name: "regist",
           component: () => import("@/components/review/RegistReview.vue"),
-          props: true
+          props: true,
         },
         {
           path: "list",
           name: "list",
-          component: () => import("@/components/review/ReviewList.vue")
+          component: () => import("@/components/review/ReviewList.vue"),
         },
         {
-          path: "updateReview/:tripReviewId",
+          path: "updateReview/:tripReviewId/:updatePage",
           name: "updateReview",
           component: () => import("@/components/review/ReviewUpdate.vue"),
-          props: true
-        }
-      ]
+          props: true,
+        },
+      ],
     },
     {
       path: "/mypage",
@@ -142,9 +142,9 @@ const router = createRouter({
     {
       path: "/chat",
       name: "chat",
-      component: TripChat
-    }
-  ]
-})
+      component: TripChat,
+    },
+  ],
+});
 
-export default router
+export default router;

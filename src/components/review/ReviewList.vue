@@ -267,7 +267,7 @@ const isReviewOwner = (review) => {
                                 @click="review.showMenu = !review.showMenu" />
                             <div v-if="review.showMenu" class="menu-dropdown">
                                 <router-link
-                                    :to="{ name: 'updateReview', params: { tripReviewId: review.tripReviewId } }"
+                                    :to="{ name: 'updateReview', params: { tripReviewId: review.tripReviewId, updatePage: 2 } }"
                                     class="dropdown-item">수정</router-link>
                                 <button @click="deleteReviewById(review.tripReviewId)" class="dropdown-item">삭제</button>
                             </div>
@@ -284,7 +284,7 @@ const isReviewOwner = (review) => {
                         <div class="image-slider">
                             <div v-for="(image, imageIndex) in review.reviewImageList" :key="imageIndex"
                                 class="image-slide">
-                                <img :src="VITE_VUE_IMG_URL + image" class="img-fluid" />
+                                <img :src="VITE_VUE_IMG_URL + image" class="img-fluid trip-image" />
                             </div>
                         </div>
                         <p class="card-text mt-3">{{ review.content }}</p>
@@ -314,7 +314,7 @@ const isReviewOwner = (review) => {
                             <div>
                                 <div class="card-body">
                                     <!-- 댓글 Form -->
-                                    <form>
+                                    <form class="mb-3">
                                         <div class="mb-3">
                                             <input v-model="addCommentForm.content" type="text" name="content"
                                                 class="form-control" placeholder="댓글을 작성해주세요" />
@@ -456,5 +456,10 @@ const isReviewOwner = (review) => {
 
 .menu-dropdown .dropdown-item:hover {
     background-color: #f0f0f0;
+}
+
+.trip-image {
+    height: 200px;
+    object-fit: cover;
 }
 </style>

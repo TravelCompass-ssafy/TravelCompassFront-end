@@ -19,7 +19,6 @@ const getBestTripViewList = () => {
     http.get("/home/plan-view")
         .then((response) => {
             bestTripViewList.value = response.data;
-            console.log(bestTripViewList.value);
         })
         .catch((error) => {
             console(error);
@@ -33,7 +32,7 @@ const getBestTripViewList = () => {
             <div v-for="bestTripView in bestTripViewList" :key="bestTripView.tripDetailId" class="col-12 col-md-4 mb-4">
                 <div class="card h-100 shadow-sm border-0">
                     <router-link :to="{ name: 'share-detail', params: { tripDetailId: bestTripView.tripDetailId } }" class="text-decoration-none text-dark">
-                        <img :src="VITE_VUE_IMG_URL + '/' + bestTripView.imagePath" class="card-img-top rounded-top" alt="Trip Image" style="height: 200px; object-fit: cover;">
+                        <img :src="VITE_VUE_IMG_URL + bestTripView.imagePath" class="card-img-top rounded-top" alt="Trip Image" style="height: 200px; object-fit: cover;">
                         <div class="card-body">
                             <h5 class="card-title">{{ bestTripView.title }}</h5>
                             <p class="card-text text-muted mb-2 small">{{ bestTripView.sidoName }}</p>

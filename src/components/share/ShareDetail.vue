@@ -122,7 +122,6 @@ const showModal = (review) => {
 const deleteTrip = () => {
     http.delete(`/trip/${tripDetail.value.tripDetailId}`)
         .then((response) => {
-            console.log("삭제완료");
             router.push({ name:'share-list' });
         })
         .catch((error) => {
@@ -151,7 +150,6 @@ const markerInput = () => {
         }
     }
 
-    console.log(markerInfoList.value);
 }
 
 </script>
@@ -161,7 +159,7 @@ const markerInput = () => {
         <div class="row">
             <div class="col-md-12">
                 <div class="card mb-4">
-                    <img :src="VITE_VUE_IMG_URL + '/' + tripDetail.imagePath" class="card-img-top img-fluid"
+                    <img :src="VITE_VUE_IMG_URL + tripDetail.imagePath" class="card-img-top img-fluid"
                         alt="Trip Image" style="max-height: 300px; object-fit: cover;">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
@@ -199,7 +197,7 @@ const markerInput = () => {
                             <div class="d-flex flex-row flex-wrap">
                                 <div class="p-2" v-for="member in tripDetail.memberList || []"
                                     :key="member.tripDetailMemberId">
-                                    {{ member.nickname }}
+                                    {{ member.nickName }}
                                 </div>
                             </div>
                         </div>

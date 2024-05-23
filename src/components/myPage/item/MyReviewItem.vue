@@ -27,12 +27,9 @@ onMounted(() => {
 })
 
 const getReviews = () => {
-    console.log("아아이");
     getReviewByUserId(
         userInfo.value.userId,
         ({ data }) => {
-            console.log("아아");
-            console.log(data);
             reviews.value = data;
         },
         (error) => {
@@ -75,7 +72,7 @@ const hideModal = () => {
             <div v-for="review in reviews" :key="review.tripReviewId" class="col-12 col-sm-6 col-md-4 mb-4"
                 @click="showModal(review)">
                 <div class=" card h-100 shadow-sm">
-                    <img :src="VITE_VUE_IMG_URL + '/' + review.reviewImageList[0]" class="card-img-top rounded-top"
+                    <img :src="VITE_VUE_IMG_URL + review.reviewImageList[0]" class="card-img-top rounded-top"
                         alt="Review Image" style="height: 210px; object-fit: cover;">
                 </div>
             </div>
@@ -95,7 +92,7 @@ const hideModal = () => {
                             @click="selectedReview.showMenu = !selectedReview.showMenu" />
                         <div v-if="selectedReview.showMenu" class="menu-dropdown">
                             <router-link @click="hideModal"
-                                :to="{ name: 'updateReview', params: { tripReviewId: selectedReview.tripReviewId } }"
+                                :to="{ name: 'updateReview', params: { tripReviewId: selectedReview.tripReviewId, updatePage: 3 } }"
                                 class="dropdown-item">수정</router-link>
                             <button @click="deleteReviewById(selectedReview.tripReviewId)"
                                 class="dropdown-item">삭제</button>

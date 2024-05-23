@@ -145,7 +145,7 @@ const hideModal = () => {
                                 @click="selectedReview.showMenu = !selectedReview.showMenu" />
                             <div v-if="selectedReview.showMenu" class="menu-dropdown">
                                 <router-link @click="hideModal"
-                                    :to="{ name: 'updateReview', params: { tripReviewId: selectedReview.tripReviewId } }"
+                                    :to="{ name: 'updateReview', params: { tripReviewId: selectedReview.tripReviewId, updatePage: 1 } }"
                                     class="dropdown-item">수정</router-link>
                                 <button @click="deleteReviewById(selectedReview.tripReviewId)"
                                     class="dropdown-item">삭제</button>

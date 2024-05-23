@@ -19,7 +19,6 @@ const getRecentTripList = () => {
     http.get("/home/trip-recent")
         .then((response) => {
             recentTripList.value = response.data;
-            console.log(recentTripList.value);
         })
         .catch((error) => {
             console(error);
@@ -33,7 +32,7 @@ const getRecentTripList = () => {
             <div v-for="recentTrip in recentTripList" :key="recentTrip.tripDetailId" class="col-12 col-md-4 mb-4">
                 <div class="card h-100 shadow-sm border-0">
                     <router-link :to="{ name: 'trip-detail', params: { tripDetailId: recentTrip.tripDetailId } }" class="text-decoration-none text-dark">
-                        <img :src="VITE_VUE_IMG_URL + '/' + recentTrip.imagePath" class="card-img-top rounded-top" alt="Trip Image" style="height: 200px; object-fit: cover;">
+                        <img :src="VITE_VUE_IMG_URL + recentTrip.imagePath" class="card-img-top rounded-top" alt="Trip Image" style="height: 200px; object-fit: cover;">
                         <div class="card-body">
                             <h5 class="card-title">{{ recentTrip.title }}</h5>
                             <p class="card-text text-muted mb-2 small">{{ recentTrip.sidoName }}</p>

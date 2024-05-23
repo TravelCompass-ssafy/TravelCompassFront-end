@@ -20,7 +20,6 @@ const getMyTripList = () => {
     http.get(`/mypage/trip/${store.userInfo.userId}`)
         .then((response) => {
             myTripList.value = response.data;
-            console.log(myTripList.value);
         })
         .catch((error) => {
             console.log(error);
@@ -34,7 +33,7 @@ const getMyTripList = () => {
         <div v-for="myTrip in myTripList" :key="myTrip.tripDetailId" class="col-12 col-sm-6 col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
             <router-link :to="{ name: 'share-detail', params: { tripDetailId: myTrip.tripDetailId } }" class="text-decoration-none">
-                <img :src="VITE_VUE_IMG_URL + '/' + myTrip.imagePath" class="card-img-top rounded-top" alt="Trip Image" style="height: 150px; object-fit: cover;">
+                <img :src="VITE_VUE_IMG_URL + myTrip.imagePath" class="card-img-top rounded-top" alt="Trip Image" style="height: 150px; object-fit: cover;">
                 <div class="card-body">
                 <h5 class="card-title text-dark">{{ myTrip.title }}</h5>
                 </div>

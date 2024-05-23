@@ -19,11 +19,9 @@ const updateData = ref({
 })
 
 const updateTrip = () => {
-    console.log(updateData.value)
     router.push({ name: "trip-detail", params: { tripDetailId: updateData.value.tripDetailId } })
     http.put("/trip", updateData.value)
         .then((response) => {
-            console.log("수정성공");
             emit('getTripDetail');
         })
 }

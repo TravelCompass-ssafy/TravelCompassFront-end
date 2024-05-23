@@ -62,7 +62,6 @@ onMounted(() => {
     const socket = new SockJS(`${VITE_VUE_SOCKET}/ws`);
     stompClient = Stomp.over(socket);
     stompClient.connect({}, frame => {
-        console.log('Connected: ' + frame);
         stompClient.subscribe(`/topic/messages/${props.tripDetailId}`, async (message) => {
             const parsedMessage = JSON.parse(message.body);
             parsedMessage.createdAtFormatted = format(parseISO(parsedMessage.createdAt), 'yyyy-MM-dd HH:mm:ss');

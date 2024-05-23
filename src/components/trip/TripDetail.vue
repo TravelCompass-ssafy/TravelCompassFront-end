@@ -36,7 +36,7 @@ const tripDetail = ref({});
 const getTripDetail = () => {
     http.get(`/trip/${route.params.tripDetailId}`)
         .then((response) => {
-            tripDetail.value = response.data;
+          tripDetail.value = response.data;
             markerInput();
         })
         .catch((error) => {
@@ -84,11 +84,9 @@ const joinTrip = async () => {
                 }
             })
                 .then((response) => {
-                    console.log(tripDetail.value.tripDetailId);
                     joinTripAlaram(
                         tripDetail.value.tripDetailId,
                         () => {
-                            console.log("알람 송신");
                         },
                         (error) => {
                             console.error(error);
@@ -107,7 +105,6 @@ const joinTrip = async () => {
 const deleteTrip = () => {
     http.delete(`/trip/${tripDetail.value.tripDetailId}`)
         .then((response) => {
-            console.log("삭제완료");
             router.push({ name: 'trip-list' });
         })
         .catch((error) => {
@@ -135,8 +132,6 @@ const markerInput = () => {
             index++;
         }
     }
-
-    console.log(markerInfoList.value);
 }
 
 </script>
@@ -146,7 +141,7 @@ const markerInput = () => {
         <div class="row">
             <div class="col-md-12">
                 <div class="card mb-4">
-                    <img :src="VITE_VUE_IMG_URL + '/' + tripDetail.imagePath" class="card-img-top img-fluid"
+                    <img :src="VITE_VUE_IMG_URL + tripDetail.imagePath" class="card-img-top img-fluid"
                         alt="Trip Image" style="max-height: 300px; object-fit: cover;">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
@@ -183,9 +178,9 @@ const markerInput = () => {
                         <div>
                             <h5 class="card-subtitle mb-2">참여중</h5>
                             <div class="d-flex flex-row flex-wrap">
-                                <div class="p-2" v-for="member in tripDetail.memberList || []"
+                                <div class="p-2" v-for="member in tripDetail.memberList"
                                     :key="member.tripDetailMemberId">
-                                    {{ member.nickname }}
+                                    {{ member.nickName }}
                                 </div>
                             </div>
                         </div>

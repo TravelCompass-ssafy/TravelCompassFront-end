@@ -20,8 +20,6 @@ const setFirstLocation = () => {
         lat.value = props.markerInfoList[0].lat;
         lng.value = props.markerInfoList[0].lng;
     }
-
-    console.log(lat.value);
 }
 
 watch(

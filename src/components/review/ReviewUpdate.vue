@@ -13,8 +13,12 @@ const router = useRouter();
 const props = defineProps(
     {
         tripReviewId: {
-            type: Number,
-            required: true
+          type: Number,
+          required: true
+        },
+        updatePage: {
+          type: Number,
+          required: true
         }
     }
 )
@@ -84,15 +88,37 @@ const submitReview = () => {
         star: rating.value
     }
 
+    
+
     updateReview(
         props.tripReviewId,
         reviewData,
         (response) => {
             if (response.status == httpStatusCode.OK) {
-                alert("리뷰가 수정되었습니다.");
+              alert("리뷰가 수정되었습니다.");
+              
+              if (props.updatePage == 1) {
+                console.log(1);
+                router.push({
+                    name: "proceed"
+                });
+              }
+              else if (props.updatePage == 2) {
+                console.log(2);
                 router.push({
                     name: "list"
                 });
+              }
+              else if (props.updatePage == 3) {
+                console.log(3);
+                router.push({
+                    name: "mypage"
+                });
+              }
+              else {
+                console.log(4);
+              }
+                
             }
         },
         (error) => {

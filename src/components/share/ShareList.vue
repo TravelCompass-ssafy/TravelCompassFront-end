@@ -73,7 +73,7 @@ const getTripDetailList = () => {
                     <router-link :to="{ name: 'share-detail', params: { tripDetailId: tripDetail.tripDetailId } }"
                         class="nav-link">
                         <div class="card">
-                            <img :src="VITE_VUE_IMG_URL + '/' + tripDetail.imagePath" class="card-img-top"
+                            <img :src="VITE_VUE_IMG_URL + tripDetail.imagePath" class="card-img-top trip-image"
                                 alt="Trip Image">
                             <div class="card-body">
                                 <h5 class="card-title">{{ tripDetail.title }}</h5>
@@ -101,4 +101,9 @@ const getTripDetailList = () => {
     </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.trip-image {
+    height: 200px;
+    object-fit: cover;
+}
+</style>
