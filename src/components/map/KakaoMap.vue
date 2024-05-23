@@ -36,7 +36,7 @@ watch(
 
 <template>
     <div>
-        <KakaoMap :lat="lat" :lng="lng" :draggable="true" :width="600" :height="400" :markerList="markerInfoList">
+        <KakaoMap :lat="lat" :lng="lng" :level="11" :draggable="true" :width="600" :height="400" :markerList="markerInfoList">
         </KakaoMap>
     </div>
 </template>

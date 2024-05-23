@@ -2,6 +2,8 @@
 import TripChat from "@/components/trip/chat/TripChat.vue";
 import TripUpdateModal from "@/components/trip/item/TripUpdateModal.vue"
 
+import KakaoMap from "@/components/map/KakaoMap.vue";
+
 import { localAxios } from "@/util/http-commons.js"
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -35,6 +37,7 @@ const getTripDetail = () => {
     http.get(`/trip/${route.params.tripDetailId}`)
         .then((response) => {
             tripDetail.value = response.data;
+            markerInput();
         })
         .catch((error) => {
             console.log(error);
@@ -112,6 +115,30 @@ const deleteTrip = () => {
         })
 }
 
+const markerInfoList = ref([]);
+
+const markerInput = () => {
+    let index = 1;
+
+    for (let i = 0; i < tripDetail.value.tripPlanAttractionList.length; i++) {
+        const markerList = tripDetail.value.tripPlanAttractionList[i];
+
+        for (let j = 0; j < markerList.length; j++) {
+            const marker = markerList[j];
+            const data = {
+                key: index,
+                lat: marker.latitude,
+                lng: marker.longitude
+            };
+
+            markerInfoList.value.push(data);
+            index++;
+        }
+    }
+
+    console.log(markerInfoList.value);
+}
+
 </script>
 
 <template>
@@ -164,6 +191,7 @@ const deleteTrip = () => {
                         </div>
                         <hr>
                         <h5 class="card-subtitle mb-2">여행계획</h5>
+                        <kakao-map :marker-info-list="markerInfoList"/>
                         <template v-for="(tripPlan, tripPlanIndex) in tripDetail.tripPlanAttractionList"
                             :key="tripPlanIndex">
                             <template v-if="tripPlan.length > 0">
